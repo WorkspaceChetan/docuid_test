@@ -1,0 +1,191 @@
+"use client";
+import { format } from "date-fns";
+import Image from "next/image";
+import React, { useEffect, useRef, useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
+const Producers = () => {
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  const [isDateOpen, setIsDateOpen] = useState(false);
+  const [isNameDropdownOpen, setIsNameDropdownOpen] = useState(false);
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
+  const [selectedName, setSelectedName] = useState("Joe Regan");
+  const [selectedCategory, setSelectedCategory] = useState(
+    "Reseau, Design, informatique"
+  );
+  const formattedStartDate = startDate ? format(startDate, "dd/MM/yy") : "";
+  const formattedEndDate = endDate ? format(endDate, "dd/MM/yy") : "";
+
+  const nameDropdownRef = useRef<HTMLDivElement>(null);
+  const categoryDropdownRef = useRef<HTMLDivElement>(null);
+
+  const names = ["Joe Regan", "Jane Doe", "John Smith"];
+  const categories = [
+    "Reseau, Design, informatique",
+    "Category 1",
+    "Category 2",
+  ];
+
+  const handleDateChange = (dates: [Date | null, Date | null]) => {
+    const [start, end] = dates;
+    setStartDate(start ?? undefined);
+    setEndDate(end ?? undefined);
+    setIsDateOpen(false);
+  };
+
+  const openDatePicker = () => {
+    setIsDateOpen(true);
+  };
+
+  const toggleNameDropdown = () => setIsNameDropdownOpen((prev) => !prev);
+
+  const toggleCategoryDropdown = () =>
+    setIsCategoryDropdownOpen((prev) => !prev);
+
+  const selectName = (name: string) => {
+    setSelectedName(name);
+    setIsNameDropdownOpen(true);
+  };
+
+  const selectCategory = (category: string) => {
+    setSelectedCategory(category);
+    setIsCategoryDropdownOpen(true);
+  };
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      nameDropdownRef.current &&
+      !nameDropdownRef.current.contains(event.target as Node)
+    ) {
+      setIsNameDropdownOpen(false);
+    }
+    if (
+      categoryDropdownRef.current &&
+      !categoryDropdownRef.current.contains(event.target as Node)
+    ) {
+      setIsCategoryDropdownOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mouseout", handleClickOutside);
+    };
+  }, []);
+
+  return (
+    <div className="max-w-screen-xl">
+      <div className="w-[1290px] h-[68px] mt-[206px] rounded-[10px] p-[12px_12px_12px_14px] gap-[33px] bg-white flex">
+        <div className="w-[300px] h-[44px] flex gap-[15px] border border-gray-300 rounded-[8px] p-[10px_18px] bg-[#F9FAFB]">
+          <Image
+            src="/image/Search.svg"
+            alt="Search Icon"
+            width={20}
+            height={20}
+            className="object-contain"
+          />
+          <input
+            type="text"
+            placeholder="Search procedure"
+            className="w-full h-full border-none outline-none text-[16px] leading-[24px] font-[400] text-[#64748B]"
+          />
+        </div>
+
+        <div className="w-[931px] h-[44px] flex gap-[10px] flex justify-end relative">
+          <div
+            className="relative w-[128px] h-[44px] rounded-[8px] border p-[10px_18px_10px_12px] gap-[8px] text-[#F9FAFB] bg-[#E5E7EB] flex items-center cursor-pointer"
+            ref={nameDropdownRef}
+            onClick={toggleNameDropdown}
+          >
+            <div className="w-[70px] h-[24px] text-[14px] leading-[24px] font-[500] text-[#495270] whitespace-nowrap">
+              {selectedName}
+            </div>
+            <Image
+              src="/image/User.svg"
+              alt="User Icon"
+              width={20}
+              height={20}
+              className="object-contain"
+            />
+            {isNameDropdownOpen && (
+              <div className="absolute top-[100%] left-0 mt-2 w-full bg-[#E5E7EB] border rounded-[8px] shadow-lg z-10">
+                {names.map((name) => (
+                  <div
+                    key={name}
+                    className="p-2 text-[14px] text-[#495270] hover:bg-[#D1D5DB] cursor-pointer"
+                    onClick={() => selectName(name)}
+                  >
+                    {name}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div
+            className="relative w-[250px] h-[44px] rounded-[8px] border p-[10px_18px_10px_12px] gap-[8px] text-[#F9FAFB] bg-[#E5E7EB] flex items-center cursor-pointer"
+            ref={categoryDropdownRef}
+            onClick={toggleCategoryDropdown}
+          >
+            <div className="w-[192px] h-[24px] text-[14px] leading-[24px] font-[500] text-[#64748B] whitespace-nowrap">
+              {selectedCategory}
+            </div>
+            <Image
+              src="/image/Widget.svg"
+              alt="Widget Icon"
+              width={20}
+              height={20}
+              className="object-contain"
+            />
+            {isCategoryDropdownOpen && (
+              <div className="absolute top-[100%] left-0 mt-2 w-full bg-[#E5E7EB] border rounded-[8px] shadow-lg z-10">
+                {categories.map((category) => (
+                  <div
+                    key={category}
+                    className="p-2 text-[14px] text-[#495270] hover:bg-[#D1D5DB] cursor-pointer"
+                    onClick={() => selectCategory(category)}
+                  >
+                    {category}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="relative w-[194px] h-[44px] rounded-[8px] border p-[10px_18px_10px_12px] gap-[8px] text-[#F9FAFB] bg-[#E5E7EB] flex items-center cursor-pointer">
+            <div className="w-[136px] h-[24px] text-[14px] leading-[24px] font-[500] text-[#64748B] whitespace-nowrap">
+              {formattedStartDate && formattedEndDate
+                ? `${formattedStartDate} - ${formattedEndDate}`
+                : "Select Date Range"}
+            </div>
+            <DatePicker
+              selected={startDate}
+              onChange={handleDateChange}
+              startDate={startDate}
+              endDate={endDate}
+              selectsRange
+              dateFormat="dd/MM/yyyy"
+              open={isDateOpen}
+              onClickOutside={() => setIsDateOpen(false)}
+              className="absolute inset-0 w-full h-full rounded-[8px] border-none bg-transparent opacity-0 cursor-pointer"
+            />
+            <Image
+              src="/image/Calendar.svg"
+              alt="Calendar Icon"
+              width={20}
+              height={20}
+              className="object-contain ml-auto"
+              onClick={openDatePicker}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Producers;

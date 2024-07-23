@@ -1,5 +1,5 @@
-import HeadingBox from "@/component/Home/HeadingBox";
+import Producers from "@/component/Home/Producers";
 
 export default function Home() {
-  return <HeadingBox />;
+  return <Producers />;
 }
