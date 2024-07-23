@@ -5,21 +5,45 @@ import { Types } from "mongoose";
 
 const ObjectId = require("mongoose").Types.ObjectId;
 
-export const GET = async () => {
-  try {
-    await connect();
-    const procedure = await Procedure.find();
-    return new NextResponse(JSON.stringify(procedure), { status: 200 });
-  } catch (error: any) {
-    return new NextResponse("Error in fetching procedure" + error.message, {
-      status: 500,
-    });
-  }
+export const getNonGMTDate = (dtParam: Date): Date => {
+  const dt = new Date(dtParam);
+  const date = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+  const userTimezoneOffset = date.getTimezoneOffset() * 60000;
+  return new Date(date.getTime() - userTimezoneOffset);
 };
 
 const convertDate = (dateString: string): Date => {
   const [day, month, year] = dateString.split("/").map(Number);
-  return new Date(year, month - 1, day);
+  const date = new Date(year, month - 1, day);
+  return getNonGMTDate(date);
+};
+export const GET = async (request: Request) => {
+  try {
+    await connect();
+    const url = new URL(request.url);
+    const startDateString = url.searchParams.get("startDate");
+    const endDateString = url.searchParams.get("endDate");
+
+    if (!startDateString || !endDateString) {
+      return new NextResponse("Start date and end date are required", {
+        status: 400,
+      });
+    }
+
+    const startDate = convertDate(startDateString);
+    const endDate = convertDate(endDateString);
+
+    const procedures = await Procedure.find({
+      createAt: { $gte: startDate },
+      dueDate: { $lte: endDate },
+    });
+
+    return new NextResponse(JSON.stringify(procedures), { status: 200 });
+  } catch (error: any) {
+    return new NextResponse("Error in fetching procedure: " + error.message, {
+      status: 500,
+    });
+  }
 };
 
 export const POST = async (request: Request) => {
