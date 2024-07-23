@@ -50,17 +50,19 @@ export const POST = async (request: Request) => {
 export const PATCH = async (request: Request) => {
   try {
     const body = await request.json();
-    const { _id, title, label, column } = body;
+    const { _id, title, label, column, dueDate } = body;
+
     await connect();
+
     if (!_id) {
-      return new NextResponse(JSON.stringify({ message: "ID  not found" }), {
+      return new NextResponse(JSON.stringify({ message: "ID not found" }), {
         status: 400,
       });
     }
 
     if (!Types.ObjectId.isValid(_id)) {
       return new NextResponse(
-        JSON.stringify({ message: "Invalid Procedure id" }),
+        JSON.stringify({ message: "Invalid Procedure ID" }),
         {
           status: 400,
         }
@@ -78,6 +80,17 @@ export const PATCH = async (request: Request) => {
     }
     if (column) updateData.column = column;
 
+    if (dueDate) {
+      try {
+        updateData.dueDate = convertDate(dueDate);
+      } catch (error) {
+        return new NextResponse(
+          JSON.stringify({ message: "Invalid dueDate format" }),
+          { status: 400 }
+        );
+      }
+    }
+
     const updatedProcedure = await Procedure.findOneAndUpdate(
       { _id: new Types.ObjectId(_id) },
       updateData,
@@ -87,7 +100,7 @@ export const PATCH = async (request: Request) => {
     if (!updatedProcedure) {
       return new NextResponse(
         JSON.stringify({ message: "Procedure not found in the database" }),
-        { status: 400 }
+        { status: 404 }
       );
     }
 
@@ -99,7 +112,7 @@ export const PATCH = async (request: Request) => {
       { status: 200 }
     );
   } catch (error: any) {
-    return new NextResponse("Error in updating user: " + error.message, {
+    return new NextResponse("Error in updating procedure: " + error.message, {
       status: 500,
     });
   }
