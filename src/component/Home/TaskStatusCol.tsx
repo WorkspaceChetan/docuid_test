@@ -3,12 +3,15 @@
 import React from "react";
 import { Draggable } from "react-beautiful-dnd";
 import TaskCard from "./TaskCard";
-import { TaskStatusColProps } from "../types/TasksManagerBoxType";
+import {
+  TaskStatusColProps,
+  GetProcedures,
+} from "../types/TasksManagerBoxType";
 
 const TaskStatusCol: React.FC<TaskStatusColProps> = ({
   title,
   color,
-  items,
+  procedures,
 }) => {
   return (
     <div className="flex flex-col gap-5 items-start">
@@ -16,19 +19,31 @@ const TaskStatusCol: React.FC<TaskStatusColProps> = ({
         <div className={`bg-${color} rounded-full w-4 h-4`} />
         <div className="text-primary-text text-sm font-black">{title}</div>
       </div>
-      {items.map((item, index) => (
-        <Draggable key={item.id} draggableId={item.id} index={index}>
-          {(provided, snapshot) => (
-            <div
-              ref={provided.innerRef}
-              {...provided.draggableProps}
-              {...provided.dragHandleProps}
-            >
-              <TaskCard {...item} />
-            </div>
-          )}
-        </Draggable>
-      ))}
+      {procedures &&
+        typeof procedures !== "string" &&
+        procedures.length > 0 &&
+        procedures.map((procedure: GetProcedures, index: number) => (
+          <Draggable
+            key={procedure.id}
+            draggableId={procedure.id.toString()}
+            index={index}
+          >
+            {(provided, snapshot) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.draggableProps}
+                {...provided.dragHandleProps}
+              >
+                <TaskCard
+                  label={procedure.label.toString()}
+                  description={procedure.title}
+                  user={procedure.user}
+                  date={procedure.dueDate}
+                />
+              </div>
+            )}
+          </Draggable>
+        ))}
     </div>
   );
 };

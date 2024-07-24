@@ -26,6 +26,7 @@ const config: Config = {
       spacing: {
         "1.25": "5px",
         "4.5": "18px",
+        "6.5": "26px",
         "7.5": "30px",
         "76": "300px",
       },

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import TaskStatusCol from "./TaskStatusCol";
 import { Columns } from "../types/TasksManagerBoxType";
+import { GetProcedures } from "@/services/types";
 
 const initialColumns: Columns = {
   todo: {
@@ -40,7 +41,7 @@ const initialColumns: Columns = {
     color: "primary",
     items: [
       {
-        id: "2",
+        id: "3",
         label: "Search",
         description: "Créer un nouveau compte sur DocutIT",
         user: "Design",
@@ -54,7 +55,7 @@ const initialColumns: Columns = {
     color: "primary",
     items: [
       {
-        id: "2",
+        id: "4",
         label: "Search",
         description: "Créer un nouveau compte sur DocutIT",
         user: "Design",
@@ -64,7 +65,9 @@ const initialColumns: Columns = {
   },
 };
 
-const TasksManagerBox: React.FC = () => {
+const TasksManagerBox: React.FC<{ procedures: GetProcedures[] | string }> = ({
+  procedures,
+}) => {
   const [columns, setColumns] = useState<Columns>(initialColumns);
 
   const onDragEnd = (result: any) => {

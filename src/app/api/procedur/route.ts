@@ -3,8 +3,6 @@ import Procedure from "@/lib/modals/procedur";
 import { NextResponse } from "next/server";
 import { Types } from "mongoose";
 
-const ObjectId = require("mongoose").Types.ObjectId;
-
 export const getNonGMTDate = (dtParam: Date): Date => {
   const dt = new Date(dtParam);
   const date = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
@@ -25,6 +23,8 @@ export const GET = async (request: Request) => {
     const startDateString = url.searchParams.get("startDate");
     const endDateString = url.searchParams.get("endDate");
     const userId = url.searchParams.get("userId");
+    const labelId = url.searchParams.get("labelId");
+    const title = url.searchParams.get("title");
 
     const filter: any = {};
 
@@ -42,10 +42,20 @@ export const GET = async (request: Request) => {
       filter.user = userId;
     }
 
-    const procedures = await Procedure.find(filter);
+    if (labelId) {
+      filter.label = labelId;
+    }
+
+    if (title) {
+      filter.title = { $regex: title, $options: "i" };
+    }
+
+    const procedures = await Procedure.find(filter)
+      .populate("user", "userName")
+      .populate("label", "labelName");
     return new NextResponse(JSON.stringify(procedures), { status: 200 });
   } catch (error: any) {
-    return new NextResponse("Error in fetching procedures: " + error.message, {
+    return new NextResponse("Error in fetching procedures: " + error, {
       status: 500,
     });
   }
@@ -76,6 +86,7 @@ export const POST = async (request: Request) => {
     });
   }
 };
+
 export const PATCH = async (request: Request) => {
   try {
     const body = await request.json();
