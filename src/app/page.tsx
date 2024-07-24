@@ -1,5 +1,5 @@
-import Producers from "@/component/Home/Producers";
+import HomePage from "@/component/Home";
 
 export default function Home() {
-  return <Producers />;
+  return <HomePage />;
 }
