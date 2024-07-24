@@ -62,9 +62,9 @@ export const GET = async (request: Request) => {
       filter.title = { $regex: title, $options: "i" };
     }
 
-    const procedures = await Procedure.find(filter)
-      .populate("user", "userName")
-      .populate("label", "labelName");
+    const procedures = await Procedure.find(filter);
+    // .populate("user", "userName")
+    // .populate("label", "labelName");
     return new NextResponse(JSON.stringify(procedures), { status: 200 });
   } catch (error: any) {
     return new NextResponse("Error in fetching procedures: " + error.message, {
