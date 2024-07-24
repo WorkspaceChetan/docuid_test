@@ -1,20 +1,28 @@
 import Image from "next/image";
 
-const TaskCard = () => {
+const TaskCard = ({
+  label,
+  description,
+  user,
+  date,
+}: {
+  label: string;
+  description: string;
+  user: string;
+  date: string;
+}) => {
   return (
     <div className="flex flex-wrap gap-2.5 rounded-md w-76 bg-white p-5">
       <div className="flex gap-2.5">
         <Image src="/image/fire.svg" alt="fire" width={32} height={16} />
         <div className="w-14 h-4 rounded-full px-2.5 py-0 border text-2.5 font-normal">
-          Réseau
+          {label}
         </div>
       </div>
-      <span className="text-base font-black text-grey-text">
-        Créer un nouveau compte sur DocutIT
-      </span>
+      <span className="text-base font-black text-grey-text">{description}</span>
       <div className="flex gap-1.25 items-center">
         <Image src="/image/profile.svg" alt="profile" width={24} height={24} />
-        <span className="text-xs font-medium text-primary-text">Joe Regan</span>
+        <span className="text-xs font-medium text-primary-text">{user}</span>
       </div>
       <hr className="w-full" />
       <div className="flex justify-between items-center w-full">
@@ -26,7 +34,7 @@ const TaskCard = () => {
             height={12}
           />
           <span className="text-2.5 font-semibold text-primary-text">
-            Due date: 27/08/24
+            Due date: {date}
           </span>
         </div>
         <div className="flex items-center gap-1.5">
