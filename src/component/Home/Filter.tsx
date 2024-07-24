@@ -98,8 +98,7 @@ const Filter = () => {
         <div
           className="relative w-full lg:w-[128px] h-[44px] rounded-[8px] border p-[10px_18px_10px_12px] gap-[8px] text-[#F9FAFB] bg-[#E5E7EB] flex items-center cursor-pointer"
           ref={nameDropdownRef}
-          onClick={toggleNameDropdown}
-        >
+          onClick={toggleNameDropdown}>
           <div className="w-full lg:w-[70px] h-[24px] text-[14px] leading-[24px] font-[500] text-[#495270] whitespace-nowrap">
             {selectedName}
           </div>
@@ -116,8 +115,7 @@ const Filter = () => {
                 <div
                   key={name}
                   className="p-2 text-[14px] text-[#495270] hover:bg-[#D1D5DB] cursor-pointer"
-                  onClick={() => selectName(name)}
-                >
+                  onClick={() => selectName(name)}>
                   {name}
                 </div>
               ))}
@@ -128,8 +126,7 @@ const Filter = () => {
         <div
           className="relative w-full lg:w-[250px] h-[44px] rounded-[8px] border p-[10px_18px_10px_12px] gap-[8px] text-[#F9FAFB] bg-[#E5E7EB] flex items-center cursor-pointer"
           ref={categoryDropdownRef}
-          onClick={toggleCategoryDropdown}
-        >
+          onClick={toggleCategoryDropdown}>
           <div className="w-full lg:w-[192px] h-[24px] text-[14px] leading-[24px] font-[500] text-[#64748B] whitespace-nowrap">
             {selectedCategory}
           </div>
@@ -146,8 +143,7 @@ const Filter = () => {
                 <div
                   key={category}
                   className="p-2 text-[14px] text-[#495270] hover:bg-[#D1D5DB] cursor-pointer"
-                  onClick={() => selectCategory(category)}
-                >
+                  onClick={() => selectCategory(category)}>
                   {category}
                 </div>
               ))}
