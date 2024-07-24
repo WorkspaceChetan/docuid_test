@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-const Producers = () => {
+const Filter = () => {
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [isDateOpen, setIsDateOpen] = useState(false);
@@ -79,8 +79,8 @@ const Producers = () => {
   }, []);
 
   return (
-    <div className="w-[1290px] h-[68px] rounded-[10px] p-[12px_12px_12px_14px] gap-[33px] bg-white flex">
-      <div className="w-[300px] h-[44px] flex gap-[15px] border border-gray-300 rounded-[8px] p-[10px_18px] bg-[#F9FAFB]">
+    <div className="w-full max-w-[1290px] h-auto lg:h-[68px] rounded-[10px] p-[12px_12px_12px_14px] lg:gap-[33px] gap-[10px] bg-white flex flex-wrap lg:flex-nowrap">
+      <div className="w-full max-w-[300px] h-[44px] flex gap-[15px] border border-gray-300 rounded-[8px] p-[10px_18px] bg-[#F9FAFB]">
         <Image
           src="/image/Search.svg"
           alt="Search Icon"
@@ -95,13 +95,13 @@ const Producers = () => {
         />
       </div>
 
-      <div className="w-[931px] h-[44px] flex gap-[10px] flex justify-end relative">
+      <div className="w-full max-w-[931px] h-auto md:h-[44px] gap-[10px] relative flex flex-wrap lg:flex-nowrap lg:justify-end">
         <div
-          className="relative w-[128px] h-[44px] rounded-[8px] border p-[10px_18px_10px_12px] gap-[8px] text-[#F9FAFB] bg-[#E5E7EB] flex items-center cursor-pointer"
+          className="relative w-full max-w-[128px] h-[44px] rounded-[8px] border p-[10px_18px_10px_12px] gap-[8px] text-[#F9FAFB] bg-[#E5E7EB] flex items-center cursor-pointer"
           ref={nameDropdownRef}
           onClick={toggleNameDropdown}
         >
-          <div className="w-[70px] h-[24px] text-[14px] leading-[24px] font-[500] text-[#495270] whitespace-nowrap">
+          <div className="w-full max-w-[70px] h-[24px] text-[14px] leading-[24px] font-[500] text-[#495270] whitespace-nowrap">
             {selectedName}
           </div>
           <Image
@@ -127,11 +127,11 @@ const Producers = () => {
         </div>
 
         <div
-          className="relative w-[250px] h-[44px] rounded-[8px] border p-[10px_18px_10px_12px] gap-[8px] text-[#F9FAFB] bg-[#E5E7EB] flex items-center cursor-pointer"
+          className="relative w-full max-w-[250px] h-[44px] rounded-[8px] border p-[10px_18px_10px_12px] gap-[8px] text-[#F9FAFB] bg-[#E5E7EB] flex items-center cursor-pointer"
           ref={categoryDropdownRef}
           onClick={toggleCategoryDropdown}
         >
-          <div className="w-[192px] h-[24px] text-[14px] leading-[24px] font-[500] text-[#64748B] whitespace-nowrap">
+          <div className="w-full max-w-[192px] h-[24px] text-[14px] leading-[24px] font-[500] text-[#64748B] whitespace-nowrap">
             {selectedCategory}
           </div>
           <Image
@@ -155,9 +155,8 @@ const Producers = () => {
             </div>
           )}
         </div>
-
-        <div className="relative w-[194px] h-[44px] rounded-[8px] border p-[10px_18px_10px_12px] gap-[8px] text-[#F9FAFB] bg-[#E5E7EB] flex items-center cursor-pointer">
-          <div className="w-[136px] h-[24px] text-[14px] leading-[24px] font-[500] text-[#64748B] whitespace-nowrap">
+        <div className="relative w-full md:w-[194px] h-[44px] rounded-lg border p-2 bg-[#E5E7EB] flex items-center cursor-pointer">
+          <div className="flex-1 text-sm font-medium text-[#64748B]">
             {formattedStartDate && formattedEndDate
               ? `${formattedStartDate} - ${formattedEndDate}`
               : "Select Date Range"}
@@ -171,7 +170,7 @@ const Producers = () => {
             dateFormat="dd/MM/yyyy"
             open={isDateOpen}
             onClickOutside={() => setIsDateOpen(false)}
-            className="absolute inset-0 w-full h-full rounded-[8px] border-none bg-transparent opacity-0 cursor-pointer"
+            className="absolute inset-0 w-full h-full rounded-lg border-none bg-transparent opacity-0 cursor-pointer"
           />
           <Image
             src="/image/Calendar.svg"
@@ -187,4 +186,4 @@ const Producers = () => {
   );
 };
 
-export default Producers;
+export default Filter;

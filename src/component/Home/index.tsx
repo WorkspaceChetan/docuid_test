@@ -1,5 +1,5 @@
 import HeadingBox from "./HeadingBox";
-import Producers from "./Producers";
+import Filter from "./Filter";
 import TasksManagerBox from "./TasksManagerBox";
 
 const HomePage = () => {
@@ -7,7 +7,7 @@ const HomePage = () => {
     <>
       <HeadingBox />
       <div className="flex flex-col gap-7.5">
-        <Producers />
+        <Filter />
         <TasksManagerBox />
       </div>
     </>
