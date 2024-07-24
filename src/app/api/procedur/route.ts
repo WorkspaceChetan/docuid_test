@@ -99,38 +99,6 @@ export const POST = async (request: Request) => {
   }
 };
 
-// export const POST = async (request: Request) => {
-//   try {
-//     const body = await request.json();
-
-//     const validatedBody = ProcedureSchema.parse(body);
-
-//     if (validatedBody.dueDate) {
-//       validatedBody.dueDate = convertDate(validatedBody.dueDate);
-//     }
-
-//     await connect();
-//     const newProcedure = new Procedure(validatedBody);
-//     await newProcedure.save();
-
-//     return new Response(
-//       JSON.stringify({
-//         message: "Procedure is created",
-//         data: newProcedure,
-//       }),
-//       { status: 200 }
-//     );
-//   } catch (error: any) {
-//     if (error instanceof z.ZodError) {
-//       return new Response(JSON.stringify({ error: error.errors }), {
-//         status: 400,
-//       });
-//     }
-//     return new Response("Error in creating procedure: " + error.message, {
-//       status: 500,
-//     });
-//   }
-// };
 export const PATCH = async (request: Request) => {
   try {
     const body = await request.json();
