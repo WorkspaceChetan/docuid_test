@@ -1,22 +1,16 @@
+"use client";
 import Image from "next/image";
+import { TaskItem } from "../types/TasksManagerBoxType";
 
-const TaskCard = ({
-  label,
-  description,
-  user,
-  date,
-}: {
-  label: string;
-  description: string;
-  user: string;
-  date: string;
-}) => {
+const TaskCard = ({ label, description, user, date }: TaskItem) => {
   return (
     <div className="flex flex-wrap gap-2.5 rounded-md w-76 bg-white p-5">
-      <div className="flex gap-2.5">
-        <Image src="/image/fire.svg" alt="fire" width={32} height={16} />
-        <div className="w-14 h-4 rounded-full px-2.5 py-0 border text-2.5 font-normal">
-          {label}
+      <div className="flex items-center gap-2.5">
+        <Image src="/image/fire.svg" alt="fire" width={44} height={16} />
+        <div className="w-full w-[55px] w-full max-w-[55px] h-[16px] text-xs font-medium border rounded-full text-gray-700 border-gray-300 flex items-center justify-center">
+          <div className="w-[35px] h-[16px] font-medium leading-[16px] text-[10px]">
+            {label}
+          </div>
         </div>
       </div>
       <span className="text-base font-black text-grey-text">{description}</span>
