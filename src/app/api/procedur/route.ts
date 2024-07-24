@@ -17,30 +17,35 @@ const convertDate = (dateString: string): Date => {
   const date = new Date(year, month - 1, day);
   return getNonGMTDate(date);
 };
+
 export const GET = async (request: Request) => {
   try {
     await connect();
     const url = new URL(request.url);
     const startDateString = url.searchParams.get("startDate");
     const endDateString = url.searchParams.get("endDate");
+    const userId = url.searchParams.get("userId");
 
-    if (!startDateString || !endDateString) {
-      return new NextResponse("Start date and end date are required", {
-        status: 400,
-      });
+    const filter: any = {};
+
+    if (startDateString) {
+      const startDate = convertDate(startDateString);
+      filter.createAt = { $gte: startDate };
     }
 
-    const startDate = convertDate(startDateString);
-    const endDate = convertDate(endDateString);
+    if (endDateString) {
+      const endDate = convertDate(endDateString);
+      filter.dueDate = { ...filter.dueDate, $lte: endDate };
+    }
 
-    const procedures = await Procedure.find({
-      createAt: { $gte: startDate },
-      dueDate: { $lte: endDate },
-    });
+    if (userId) {
+      filter.user = userId;
+    }
 
+    const procedures = await Procedure.find(filter);
     return new NextResponse(JSON.stringify(procedures), { status: 200 });
   } catch (error: any) {
-    return new NextResponse("Error in fetching procedure: " + error.message, {
+    return new NextResponse("Error in fetching procedures: " + error.message, {
       status: 500,
     });
   }
