@@ -2,18 +2,6 @@ import connect from "@/lib/db";
 import Procedure from "@/lib/modals/procedur";
 import { NextResponse } from "next/server";
 import { Types } from "mongoose";
-import { z } from "zod";
-
-const ObjectId = require("mongoose").Types.ObjectId;
-
-const ProcedureSchema = z.object({
-  title: z.string().nonempty("Title is required"),
-  user: z.string().nonempty("User ID is required"),
-  label: z.array(z.string()),
-  column: z.string().optional(),
-  dueDate: z.string().optional(),
-  createAt: z.date().optional(),
-});
 
 export const getNonGMTDate = (dtParam: Date): Date => {
   const dt = new Date(dtParam);
@@ -62,12 +50,12 @@ export const GET = async (request: Request) => {
       filter.title = { $regex: title, $options: "i" };
     }
 
-    const procedures = await Procedure.find(filter);
-    // .populate("user", "userName")
-    // .populate("label", "labelName");
+    const procedures = await Procedure.find(filter)
+      .populate("user", "userName")
+      .populate("label", "labelName");
     return new NextResponse(JSON.stringify(procedures), { status: 200 });
   } catch (error: any) {
-    return new NextResponse("Error in fetching procedures: " + error.message, {
+    return new NextResponse("Error in fetching procedures: " + error, {
       status: 500,
     });
   }
