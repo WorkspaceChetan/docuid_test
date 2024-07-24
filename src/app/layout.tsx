@@ -16,8 +16,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <div className="max-w-screen-xl p-5 flex flex-col gap-5 md:p-10">
+      <body className={`${inter.className} px-2 md:px-4`}>
+        <div className="max-w-screen-xl py-5 flex flex-col gap-5 md:py-10 mx-auto">
           {children}
         </div>
       </body>
