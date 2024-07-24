@@ -16,3 +16,25 @@ export const GET = async () => {
     });
   }
 };
+
+export const POST = async (request: Request) => {
+  try {
+    const body = await request.json();
+
+    await connect();
+    const userAdded = new User(body);
+    await userAdded.save();
+
+    return new NextResponse(
+      JSON.stringify({
+        message: "userAdded is created",
+        data: userAdded,
+      }),
+      { status: 200 }
+    );
+  } catch (error: any) {
+    return new NextResponse("Error in creating users: " + error.message, {
+      status: 500,
+    });
+  }
+};

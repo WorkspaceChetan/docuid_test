@@ -2,8 +2,18 @@ import connect from "@/lib/db";
 import Procedure from "@/lib/modals/procedur";
 import { NextResponse } from "next/server";
 import { Types } from "mongoose";
+import { z } from "zod";
 
 const ObjectId = require("mongoose").Types.ObjectId;
+
+const ProcedureSchema = z.object({
+  title: z.string().nonempty("Title is required"),
+  user: z.string().nonempty("User ID is required"),
+  label: z.array(z.string()),
+  column: z.string().optional(),
+  dueDate: z.string().optional(),
+  createAt: z.date().optional(),
+});
 
 export const getNonGMTDate = (dtParam: Date): Date => {
   const dt = new Date(dtParam);
@@ -25,6 +35,8 @@ export const GET = async (request: Request) => {
     const startDateString = url.searchParams.get("startDate");
     const endDateString = url.searchParams.get("endDate");
     const userId = url.searchParams.get("userId");
+    const labelId = url.searchParams.get("labelId");
+    const title = url.searchParams.get("title");
 
     const filter: any = {};
 
@@ -42,7 +54,17 @@ export const GET = async (request: Request) => {
       filter.user = userId;
     }
 
-    const procedures = await Procedure.find(filter);
+    if (labelId) {
+      filter.label = labelId;
+    }
+
+    if (title) {
+      filter.title = { $regex: title, $options: "i" };
+    }
+
+    const procedures = await Procedure.find(filter)
+      .populate("user", "userName")
+      .populate("label", "labelName");
     return new NextResponse(JSON.stringify(procedures), { status: 200 });
   } catch (error: any) {
     return new NextResponse("Error in fetching procedures: " + error.message, {
@@ -76,6 +98,39 @@ export const POST = async (request: Request) => {
     });
   }
 };
+
+// export const POST = async (request: Request) => {
+//   try {
+//     const body = await request.json();
+
+//     const validatedBody = ProcedureSchema.parse(body);
+
+//     if (validatedBody.dueDate) {
+//       validatedBody.dueDate = convertDate(validatedBody.dueDate);
+//     }
+
+//     await connect();
+//     const newProcedure = new Procedure(validatedBody);
+//     await newProcedure.save();
+
+//     return new Response(
+//       JSON.stringify({
+//         message: "Procedure is created",
+//         data: newProcedure,
+//       }),
+//       { status: 200 }
+//     );
+//   } catch (error: any) {
+//     if (error instanceof z.ZodError) {
+//       return new Response(JSON.stringify({ error: error.errors }), {
+//         status: 400,
+//       });
+//     }
+//     return new Response("Error in creating procedure: " + error.message, {
+//       status: 500,
+//     });
+//   }
+// };
 export const PATCH = async (request: Request) => {
   try {
     const body = await request.json();
