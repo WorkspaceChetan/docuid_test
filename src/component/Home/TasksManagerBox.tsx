@@ -1,67 +1,35 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import TaskStatusCol from "./TaskStatusCol";
-import { Columns } from "../types/TasksManagerBoxType";
+import { Columns, TaskItem } from "../types/TasksManagerBoxType";
 import { GetProcedures } from "@/services/types";
 
 const initialColumns: Columns = {
   todo: {
     id: "todo",
-    title: "Todo (1)",
-    color: "primary",
-    items: [
-      {
-        id: "1",
-        label: "Réseau",
-        description: "Créer un nouveau compte sur DocutIT",
-        user: "Joe Regan",
-        date: "27/08/24",
-      },
-    ],
+    title: "Todo",
+    color: "success",
+    items: [],
   },
   doing: {
     id: "doing",
-    title: "On doing (1)",
-    color: "primary",
-    items: [
-      {
-        id: "2",
-        label: "Search",
-        description: "Créer un nouveau compte sur DocutIT",
-        user: "Design",
-        date: "27/08/24",
-      },
-    ],
+    title: "On doing",
+    color: "warning",
+    items: [],
   },
   done: {
     id: "done",
-    title: "Done (1)",
+    title: "Done",
     color: "primary",
-    items: [
-      {
-        id: "3",
-        label: "Search",
-        description: "Créer un nouveau compte sur DocutIT",
-        user: "Design",
-        date: "27/08/24",
-      },
-    ],
+    items: [],
   },
   waiting: {
     id: "waiting",
-    title: "Waiting (1)",
-    color: "primary",
-    items: [
-      {
-        id: "4",
-        label: "Search",
-        description: "Créer un nouveau compte sur DocutIT",
-        user: "Design",
-        date: "27/08/24",
-      },
-    ],
+    title: "Waiting",
+    color: "grey-text",
+    items: [],
   },
 };
 
@@ -69,6 +37,30 @@ const TasksManagerBox: React.FC<{ procedures: GetProcedures[] | string }> = ({
   procedures,
 }) => {
   const [columns, setColumns] = useState<Columns>(initialColumns);
+
+  useEffect(() => {
+    if (typeof procedures !== "string") {
+      const newColumns: Columns = { ...initialColumns };
+      procedures.forEach((procedure) => {
+        const task: TaskItem = {
+          id: procedure._id,
+          label: procedure.label[0]?.labelName || "No Label",
+          description: procedure.title,
+          user: procedure.user.userName,
+          date: new Date(procedure.dueDate).toLocaleDateString(),
+        };
+
+        if (
+          !newColumns[procedure.column].items.some(
+            (item) => item.id === task.id
+          )
+        ) {
+          newColumns[procedure.column].items.push(task);
+        }
+      });
+      setColumns(newColumns);
+    }
+  }, [procedures]);
 
   const onDragEnd = (result: any) => {
     const { source, destination } = result;
@@ -83,17 +75,17 @@ const TasksManagerBox: React.FC<{ procedures: GetProcedures[] | string }> = ({
 
     if (source.droppableId === destination.droppableId) {
       sourceItems.splice(destination.index, 0, removed);
-      setColumns({
-        ...columns,
+      setColumns((prevColumns) => ({
+        ...prevColumns,
         [source.droppableId]: {
           ...sourceColumn,
           items: sourceItems,
         },
-      });
+      }));
     } else {
       destItems.splice(destination.index, 0, removed);
-      setColumns({
-        ...columns,
+      setColumns((prevColumns) => ({
+        ...prevColumns,
         [source.droppableId]: {
           ...sourceColumn,
           items: sourceItems,
@@ -102,7 +94,7 @@ const TasksManagerBox: React.FC<{ procedures: GetProcedures[] | string }> = ({
           ...destColumn,
           items: destItems,
         },
-      });
+      }));
     }
   };
 
