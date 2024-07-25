@@ -41,10 +41,6 @@ const TasksManagerBox: React.FC<{
 
   useEffect(() => {
     if (typeof procedures !== "string") {
-      console.log("Procedures:", procedures);
-      console.log("Selected Name:", selectedName);
-      console.log("Selected Category:", selectedCategory);
-
       const newColumns: Columns = { ...initialColumns };
 
       procedures.forEach((procedure) => {
@@ -52,9 +48,6 @@ const TasksManagerBox: React.FC<{
         const matchesName = procedure.user.userName === selectedName;
         const matchesCategory =
           procedure.label[0]?.labelName === selectedCategory;
-
-        console.log("Matches Name:", matchesName);
-        console.log("Matches Category:", matchesCategory);
 
         if (matchesName && matchesCategory) {
           const task: TaskItem = {
@@ -75,7 +68,6 @@ const TasksManagerBox: React.FC<{
         }
       });
 
-      console.log("New Columns:", newColumns);
       setColumns(newColumns);
     }
   }, [procedures, selectedName, selectedCategory]);
@@ -125,8 +117,7 @@ const TasksManagerBox: React.FC<{
               <div
                 ref={provided.innerRef}
                 {...provided.droppableProps}
-                className="flex flex-col gap-5 items-start"
-              >
+                className="flex flex-col gap-5 items-start">
                 <TaskStatusCol
                   title={column.title}
                   color={column.color}
