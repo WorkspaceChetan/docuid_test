@@ -47,6 +47,14 @@ const Filter = ({ procedures }: { procedures: GetProcedures[] | string }) => {
     setIsLabelDropdownOpen(false);
   };
 
+  const handleRemoveUser = () => {
+    setSelectedUser("");
+  };
+
+  const handleRemoveLabel = () => {
+    setSelectedLabel("");
+  };
+
   const handleDateChange = (dates: [Date | null, Date | null]) => {
     const [start, end] = dates;
     setStartDate(start ?? undefined);
@@ -128,26 +136,42 @@ const Filter = ({ procedures }: { procedures: GetProcedures[] | string }) => {
           <div
             className="relative w-full lg:w-[128px] h-[44px] rounded-[8px] border p-[10px_18px_10px_12px] gap-[8px] text-[#F9FAFB] bg-[#F9FAFB] flex items-center cursor-pointer"
             ref={nameDropdownRef}
-            onClick={toggleUserDropdown}
-          >
+            onClick={toggleUserDropdown}>
             <div className="w-full lg:w-[70px] h-[24px] text-[14px] leading-[24px] font-[500] text-[#495270] whitespace-nowrap">
               {selectedUser}
             </div>
-            <Image
-              src="/image/User.svg"
-              alt="User Icon"
-              width={20}
-              height={20}
-              className="object-contain"
-            />
+            {selectedUser ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 text-gray-500 ml-2 cursor-pointer"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                onClick={handleRemoveUser}>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            ) : (
+              <Image
+                src="/image/User.svg"
+                alt="User Icon"
+                width={20}
+                height={20}
+                className="object-contain"
+              />
+            )}
+
             {isUserDropdownOpen && (
               <div className="absolute top-[100%] left-0 mt-2 w-full bg-[#E5E7EB] border rounded-[8px] shadow-lg z-10">
                 {userProcedures.map((procedure) => (
                   <div
                     key={procedure._id}
                     className="p-2 text-[14px] text-[#495270] hover:bg-[#D1D5DB] cursor-pointer"
-                    onClick={() => handleUserSelect(procedure.userName)}
-                  >
+                    onClick={() => handleUserSelect(procedure.userName)}>
                     {procedure.userName}
                   </div>
                 ))}
@@ -158,26 +182,42 @@ const Filter = ({ procedures }: { procedures: GetProcedures[] | string }) => {
           <div
             className="relative w-full lg:w-[250px] h-[44px] rounded-[8px] border p-[10px_18px_10px_12px] gap-[8px] text-[#F9FAFB] bg-[#F9FAFB] flex items-center cursor-pointer"
             ref={categoryDropdownRef}
-            onClick={toggleLabelDropdown}
-          >
+            onClick={toggleLabelDropdown}>
             <div className="w-full lg:w-[192px] h-[24px] text-[14px] leading-[24px] font-[500] text-[#64748B] whitespace-nowrap">
               {selectedLabel}
             </div>
-            <Image
-              src="/image/Widget.svg"
-              alt="Widget Icon"
-              width={20}
-              height={20}
-              className="object-contain"
-            />
+            {selectedLabel ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 text-gray-500 ml-2 cursor-pointer"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                onClick={handleRemoveLabel}>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            ) : (
+              <Image
+                src="/image/Widget.svg"
+                alt="Widget Icon"
+                width={20}
+                height={20}
+                className="object-contain"
+              />
+            )}
+
             {isLabelDropdownOpen && (
               <div className="absolute top-[100%] left-0 mt-2 w-full bg-[#E5E7EB] border rounded-[8px] shadow-lg z-10">
                 {labelProcedures.map((procedure) => (
                   <div
                     key={procedure._id}
                     className="p-2 text-[14px] text-[#495270] hover:bg-[#D1D5DB] cursor-pointer"
-                    onClick={() => handleLabelSelect(procedure.labelName)}
-                  >
+                    onClick={() => handleLabelSelect(procedure.labelName)}>
                     {procedure.labelName}
                   </div>
                 ))}

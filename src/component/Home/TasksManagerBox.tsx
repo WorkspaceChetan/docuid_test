@@ -146,7 +146,7 @@ const TasksManagerBox: React.FC<{
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="flex flex-wrap gap-7.5">
+      <div className="flex gap-7.5 overflow-auto">
         {Object.entries(columns)?.map(([id, column]) => (
           <Droppable key={id} droppableId={id}>
             {(provided) => (

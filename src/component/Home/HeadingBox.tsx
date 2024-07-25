@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import dh, { parse, format } from "date-fns";
+import { parse, format } from "date-fns";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useForm } from "react-hook-form";
@@ -95,16 +95,17 @@ const HeadingBox = () => {
     setIsLabelDropdownOpen(false);
   };
 
-  const watchFields = watch(["user", "label", "startDate", "endDate"]);
-
   const handleDateChange = (dates: [Date | null, Date | null]) => {
     const [start, end] = dates;
-
     setStartDate(start ?? undefined);
     setEndDate(end ?? undefined);
     setValue("startDate", start as Date);
     setValue("endDate", end ?? undefined);
-    setIsDateOpen(false);
+    if (end) setIsDateOpen(false);
+  };
+
+  const openDatePicker = () => {
+    setIsDateOpen(true);
   };
 
   const handleSave = async (data: FormValues) => {
@@ -128,10 +129,6 @@ const HeadingBox = () => {
     }
   };
 
-  const openDatePicker = () => {
-    setIsDateOpen(true);
-  };
-
   const handleClickOutside = (event: MouseEvent) => {
     if (
       nameDropdownRef.current &&
@@ -145,6 +142,16 @@ const HeadingBox = () => {
     ) {
       setIsLabelDropdownOpen(false);
     }
+  };
+
+  const handleRemoveUser = () => {
+    setSelectedUser("");
+    setValue("user", "");
+  };
+
+  const handleRemoveLabel = () => {
+    setSelectedLabel("");
+    setValue("label", "");
   };
 
   useEffect(() => {
@@ -204,7 +211,7 @@ const HeadingBox = () => {
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-auto bg-black bg-opacity-50">
           <div className="bg-white rounded-lg shadow-lg w-[40%] p-6 max-sm:w-3/4">
-            <h2 className="text-xl font-semibold mb-4">procedure</h2>
+            <h2 className="text-xl font-semibold mb-4">Procedure</h2>
             <form onSubmit={handleSubmit(handleSave)}>
               <div className="mb-2">
                 <label className="block text-gray-700 mb-1">Title</label>
@@ -212,7 +219,7 @@ const HeadingBox = () => {
                   type="text"
                   {...register("title")}
                   placeholder="Title"
-                  className="w-full px-4 py-2 mb-4 border rounded-md focus:outline-none focus:ring-0 text-[14px] text-[black] bg-[#e5e7eb]"
+                  className="w-full px-4 py-2 mb-4 border rounded-md focus:outline-none focus:ring-0 text-[14px]  text-[#495270] bg-[#F9FAFB]"
                 />
                 {errors.title && (
                   <div className="text-red-600 text-sm">
@@ -226,7 +233,7 @@ const HeadingBox = () => {
                   type="text"
                   {...register("category")}
                   placeholder="Category"
-                  className="w-full px-4 py-2 mb-4 border rounded-md focus:outline-none text-[14px] text-[#495270] bg-[#e5e7eb]"
+                  className="w-full px-4 py-2 mb-4 border rounded-md focus:outline-none text-[14px] text-[#495270] bg-[#F9FAFB]"
                 />
                 {errors.category && (
                   <div className="text-red-600 text-sm">
@@ -234,10 +241,10 @@ const HeadingBox = () => {
                   </div>
                 )}
               </div>
-
-              <div className="w-full max-w-[931px] h-auto lg:h-[44px] ">
-                <div className="flex justify-between max-md:flex-col gap-2">
+              <div className="mb-2">
+                <div className="flex justify-between gap-4">
                   <div className="flex flex-col">
+                    <label className="block text-gray-700 mb-1">User</label>
                     <div
                       className="relative w-full lg:w-[128px] h-[44px] rounded-[8px] border p-[10px_18px_10px_12px] gap-[8px] text-[#F9FAFB] bg-[#F9FAFB] flex items-center cursor-pointer"
                       ref={nameDropdownRef}
@@ -245,13 +252,30 @@ const HeadingBox = () => {
                       <div className="w-full lg:w-[70px] h-[24px] text-[14px] leading-[24px] font-[500] text-[#495270] whitespace-nowrap">
                         {selectedUser}
                       </div>
-                      <Image
-                        src="/image/User.svg"
-                        alt="User Icon"
-                        width={20}
-                        height={20}
-                        className="object-contain"
-                      />
+                      {selectedUser ? (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4 text-gray-500 ml-2 cursor-pointer"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          onClick={handleRemoveUser}>
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      ) : (
+                        <Image
+                          src="/image/User.svg"
+                          alt="User Icon"
+                          width={20}
+                          height={20}
+                          className="object-contain"
+                        />
+                      )}
 
                       {isUserDropdownOpen && (
                         <div className="absolute top-[100%] left-0 mt-2 w-full bg-[#E5E7EB] border rounded-[8px] shadow-lg z-10">
@@ -268,7 +292,6 @@ const HeadingBox = () => {
                         </div>
                       )}
                     </div>
-
                     {errors.user && (
                       <div className="text-red-600 text-sm">
                         {errors.user.message}
@@ -276,6 +299,7 @@ const HeadingBox = () => {
                     )}
                   </div>
                   <div className="flex flex-col">
+                    <label className="block text-gray-700 mb-1">Label</label>
                     <div
                       className="relative w-full  h-[44px] rounded-[8px] border p-[10px_18px_10px_12px] gap-[8px] text-[#F9FAFB] bg-[#F9FAFB] flex items-center cursor-pointer"
                       ref={categoryDropdownRef}
@@ -283,13 +307,31 @@ const HeadingBox = () => {
                       <div className="w-full lg:w-[192px] h-[24px] text-[14px] leading-[24px] font-[500] text-[#64748B] whitespace-nowrap">
                         {selectedLabel}
                       </div>
-                      <Image
-                        src="/image/Widget.svg"
-                        alt="Widget Icon"
-                        width={20}
-                        height={20}
-                        className="object-contain"
-                      />
+                      {selectedLabel ? (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4 text-gray-500 ml-2 cursor-pointer"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          onClick={handleRemoveLabel}>
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      ) : (
+                        <Image
+                          src="/image/Widget.svg"
+                          alt="Widget Icon"
+                          width={20}
+                          height={20}
+                          className="object-contain"
+                        />
+                      )}
+
                       {isLabelDropdownOpen && (
                         <div className="absolute top-[100%] left-0 mt-2 w-full bg-[#E5E7EB] border rounded-[8px] shadow-lg z-10">
                           {labelProcedures.map((procedure) => (
@@ -314,6 +356,7 @@ const HeadingBox = () => {
                 </div>
               </div>
               <div className="w-full max-w-[931px] h-auto lg:h-[44px] gap-[10px] mt-10 ">
+                <label className="block text-gray-700 mb-1">Due Date</label>
                 <div className="relative w-full lg:w-[194px] h-[44px] rounded-lg border p-2 bg-[#F9FAFB] flex items-center cursor-pointer">
                   <div className="flex-1 text-sm font-medium text-[#64748B]">
                     {formattedStartDate && formattedEndDate
