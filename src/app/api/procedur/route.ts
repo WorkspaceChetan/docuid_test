@@ -64,11 +64,6 @@ export const GET = async (request: Request) => {
 export const POST = async (request: Request) => {
   try {
     const body = await request.json();
-
-    if (body.dueDate) {
-      body.dueDate = convertDate(body.dueDate);
-    }
-
     await connect();
     const newProcedure = new Procedure(body);
     await newProcedure.save();

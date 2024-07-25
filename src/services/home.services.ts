@@ -1,5 +1,6 @@
 import axios from "axios";
 import {
+  createProceduesParam,
   GetProcedures,
   labelProcedures,
   UpdateProcedureParams,
@@ -35,6 +36,20 @@ export class HomeServices {
     try {
       const res = await axios.get<labelProcedures[]>(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/label`
+      );
+
+      return res.data;
+    } catch (err: any) {
+      return "Something went wrong! Please try again later.";
+    }
+  };
+
+  static createProcedues = async (params: createProceduesParam) => {
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/procedur`,
+        params,
+        { headers: { "Content-Type": "application/json" } }
       );
 
       return res.data;

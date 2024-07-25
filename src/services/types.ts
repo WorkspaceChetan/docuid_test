@@ -59,3 +59,13 @@ export interface UpdateProcedureParams {
   _id: string;
   column: string;
 }
+export interface createProceduesParam {
+  title: string;
+  user: string;
+  label: string[];
+  column: string;
+  startDate: string;
+  endDate: string;
+  createAt?: string;
+  dueDate?: string;
+}

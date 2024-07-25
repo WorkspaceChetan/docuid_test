@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { ToastContainer } from "react-toastify";
 import "./globals.css";
-
-const inter = Inter({ subsets: ["latin"] });
+import "react-toastify/dist/ReactToastify.css";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,10 +15,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} px-2 md:px-4`}>
+      <body className="font-inter px-2 md:px-4">
         <div className="w-full max-w-[1290px] py-5 flex flex-col gap-5 md:py-10 mx-auto">
           {children}
         </div>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          className="version2"
+        />
       </body>
     </html>
   );
