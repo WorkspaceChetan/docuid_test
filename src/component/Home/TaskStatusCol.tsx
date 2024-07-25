@@ -12,7 +12,9 @@ const TaskStatusCol: React.FC<TaskStatusColProps> = ({
     <div className="flex flex-col gap-5 items-start w-[300px]">
       <div className="flex gap-2.5 items-center">
         <div className={`bg-${color} rounded-full w-4 h-4`} />
-        <div className="text-primary-text text-sm font-black">{title}</div>
+        <div className="text-primary-text text-sm font-black font-satoshi-variable text-[14px] leading-[22px]">
+          {title}
+        </div>
       </div>
       {items.map((item, index) => (
         <Draggable key={item.id} draggableId={item.id} index={index}>
