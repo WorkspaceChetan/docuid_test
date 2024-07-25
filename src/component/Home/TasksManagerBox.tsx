@@ -3,8 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import TaskStatusCol from "./TaskStatusCol";
-import { Columns, TaskItem } from "../types/TasksManagerBoxType";
-import { GetProcedures } from "@/services/types";
+import { Columns, GetProcedures, TaskItem } from "@/services/types";
 
 const initialColumns: Columns = {
   todo: {
@@ -33,34 +32,53 @@ const initialColumns: Columns = {
   },
 };
 
-const TasksManagerBox: React.FC<{ procedures: GetProcedures[] | string }> = ({
-  procedures,
-}) => {
+const TasksManagerBox: React.FC<{
+  procedures: GetProcedures[] | string;
+  selectedName: string;
+  selectedCategory: string;
+}> = ({ procedures, selectedName, selectedCategory }) => {
   const [columns, setColumns] = useState<Columns>(initialColumns);
 
   useEffect(() => {
     if (typeof procedures !== "string") {
-      const newColumns: Columns = { ...initialColumns };
-      procedures.forEach((procedure) => {
-        const task: TaskItem = {
-          id: procedure._id,
-          label: procedure.label[0]?.labelName || "No Label",
-          description: procedure.title,
-          user: procedure.user.userName,
-          date: new Date(procedure.dueDate).toLocaleDateString(),
-        };
+      console.log("Procedures:", procedures);
+      console.log("Selected Name:", selectedName);
+      console.log("Selected Category:", selectedCategory);
 
-        if (
-          !newColumns[procedure.column].items.some(
-            (item) => item.id === task.id
-          )
-        ) {
-          newColumns[procedure.column].items.push(task);
+      const newColumns: Columns = { ...initialColumns };
+
+      procedures.forEach((procedure) => {
+        const taskDate = new Date(procedure.dueDate);
+        const matchesName = procedure.user.userName === selectedName;
+        const matchesCategory =
+          procedure.label[0]?.labelName === selectedCategory;
+
+        console.log("Matches Name:", matchesName);
+        console.log("Matches Category:", matchesCategory);
+
+        if (matchesName && matchesCategory) {
+          const task: TaskItem = {
+            id: procedure._id,
+            label: procedure.label[0]?.labelName || "No Label",
+            description: procedure.title,
+            user: procedure.user.userName,
+            date: taskDate.toLocaleDateString(),
+          };
+
+          if (
+            !newColumns[procedure.column].items.some(
+              (item) => item.id === task.id
+            )
+          ) {
+            newColumns[procedure.column].items.push(task);
+          }
         }
       });
+
+      console.log("New Columns:", newColumns);
       setColumns(newColumns);
     }
-  }, [procedures]);
+  }, [procedures, selectedName, selectedCategory]);
 
   const onDragEnd = (result: any) => {
     const { source, destination } = result;
