@@ -11,10 +11,6 @@ const HeadingBox = () => {
   const [description, setDescription] = useState("");
 
   const handleSave = () => {
-    console.log("Label name:", labelName);
-    console.log("Email:", email);
-    console.log("Description:", description);
-
     setShowModal(false);
     setLabelName("");
     setEmail("");
@@ -92,16 +88,17 @@ const HeadingBox = () => {
     <div>
       <div className="flex justify-between items-start md:items-end gap-3 flex-col md:flex-row">
         <div className="flex gap-1 items-start flex-col">
-          <span className="text-2xl font-black text-primary-text">
+          <span className="text-2xl font-black text-primary-text font-satoshi-variable">
             Projet champion 💪
           </span>
-          <span className="text-sm font-normal text-secondary-text">
+          <span className="text-sm font-normal text-secondary-text font-satoshi-variable">
             Home / Projects / Projet champion 💪
           </span>
         </div>
         <button
-          className="flex gap-2 h-11 rounded-lg py-2.5 pl-3 pr-4.5 bg-primary text-white font-black text-base"
-          onClick={() => setShowModal(true)}>
+          className="flex gap-2 h-11 rounded-lg py-2.5 pl-3 pr-4.5 bg-primary text-white font-black text-base font-satoshi-variable"
+          onClick={() => setShowModal(true)}
+        >
           <Image src="/image/Add Square.svg" alt="add" width={20} height={20} />
           Create a new procedure
         </button>
@@ -137,7 +134,8 @@ const HeadingBox = () => {
                 <div
                   className="relative w-full lg:w-[220px] h-[44px] rounded-[8px] border p-[10px_18px_10px_12px] gap-[8px] text-[#F9FAFB] bg-[#E5E7EB] flex items-center cursor-pointer"
                   ref={nameDropdownRef}
-                  onClick={toggleNameDropdown}>
+                  onClick={toggleNameDropdown}
+                >
                   <div className="flex w-96 justify-between">
                     <div className="w-full lg:w-[70px] h-[24px] text-[14px] leading-[24px] font-[500] text-[#495270] whitespace-nowrap">
                       {selectedName}
@@ -156,7 +154,8 @@ const HeadingBox = () => {
                         <div
                           key={name}
                           className="p-2 text-[14px] text-[#495270] hover:bg-[#D1D5DB] cursor-pointer"
-                          onClick={() => selectName(name)}>
+                          onClick={() => selectName(name)}
+                        >
                           {name}
                         </div>
                       ))}
@@ -170,7 +169,8 @@ const HeadingBox = () => {
                 <div
                   className="relative w-full lg:w-[250px] h-[44px] rounded-[8px] border p-[10px_18px_10px_12px] gap-[8px] text-[#F9FAFB] bg-[#E5E7EB] flex items-center cursor-pointer"
                   ref={categoryDropdownRef}
-                  onClick={toggleCategoryDropdown}>
+                  onClick={toggleCategoryDropdown}
+                >
                   <div className="w-full lg:w-[192px] h-[24px] text-[14px] leading-[24px] font-[500] text-[#64748B] whitespace-nowrap">
                     {selectedCategory}
                   </div>
@@ -187,7 +187,8 @@ const HeadingBox = () => {
                         <div
                           key={category}
                           className="p-2 text-[14px] text-[#495270] hover:bg-[#D1D5DB] cursor-pointer"
-                          onClick={() => selectCategory(category)}>
+                          onClick={() => selectCategory(category)}
+                        >
                           {category}
                         </div>
                       ))}
@@ -230,12 +231,14 @@ const HeadingBox = () => {
             <div className="flex justify-end">
               <button
                 className="px-4 py-2 mr-2 text-white bg-blue-500 rounded hover:bg-blue-600"
-                onClick={handleSave}>
+                onClick={handleSave}
+              >
                 Save
               </button>
               <button
                 className="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
-                onClick={() => setShowModal(false)}>
+                onClick={() => setShowModal(false)}
+              >
                 Cancel
               </button>
             </div>
