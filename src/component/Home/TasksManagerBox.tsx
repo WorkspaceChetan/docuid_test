@@ -108,7 +108,7 @@ const TasksManagerBox: React.FC<{
     fetchData();
   }, [selectedName, selectedCategory, searchInput, startDate, endDate]);
 
-  const onDragEnd = (result: any) => {
+  const onDragEnd = async (result: any) => {
     const { source, destination } = result;
 
     if (!destination) return;
@@ -141,9 +141,17 @@ const TasksManagerBox: React.FC<{
           items: destItems,
         },
       }));
+
+      try {
+        await HomeServices.updateProcedures({
+          _id: removed.id,
+          column: destination.droppableId,
+        });
+      } catch (error) {
+        console.error("Failed to update procedure column:", error);
+      }
     }
   };
-
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="flex flex-wrap gap-7.5">

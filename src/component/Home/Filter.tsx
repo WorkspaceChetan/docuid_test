@@ -11,8 +11,11 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import TasksManagerBox from "./TasksManagerBox";
 import { HomeServices } from "@/services/home.services";
+import useRebounceSearch from "@/hooks/useRebounceSearch";
 
 const Filter = ({ procedures }: { procedures: GetProcedures[] | string }) => {
+  const [searchInput, setSearchInput] = useState<string>("");
+  const debouncedSearchInput = useRebounceSearch(searchInput, 500);
   const [userProcedures, setuserProcedures] = useState<UserProcedures[]>([]);
   const [selectedUser, setSelectedUser] = useState<string>("");
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
@@ -29,7 +32,6 @@ const Filter = ({ procedures }: { procedures: GetProcedures[] | string }) => {
   const formattedEndDate = endDate ? format(endDate, "dd/MM/yy") : "";
   const nameDropdownRef = useRef<HTMLDivElement>(null);
   const categoryDropdownRef = useRef<HTMLDivElement>(null);
-  const [searchInput, setSearchInput] = useState<string>("");
 
   const toggleLabelDropdown = () => setIsLabelDropdownOpen((prev) => !prev);
 
@@ -216,7 +218,7 @@ const Filter = ({ procedures }: { procedures: GetProcedures[] | string }) => {
       <TasksManagerBox
         selectedName={selectedUser}
         selectedCategory={selectedLabel}
-        searchInput={searchInput}
+        searchInput={debouncedSearchInput}
         startDate={startDate}
         endDate={endDate}
       />

@@ -54,3 +54,8 @@ export interface labelProcedures {
   labelName: string;
   __v: number;
 }
+
+export interface UpdateProcedureParams {
+  _id: string;
+  column: string;
+}
