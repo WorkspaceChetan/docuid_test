@@ -55,6 +55,10 @@ export interface labelProcedures {
   __v: number;
 }
 
+export interface UpdateProcedureParams {
+  _id: string;
+  column: string;
+}
 export interface createProceduesParam {
   title: string;
   user: string;

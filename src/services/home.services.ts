@@ -3,6 +3,7 @@ import {
   createProceduesParam,
   GetProcedures,
   labelProcedures,
+  UpdateProcedureParams,
   UserProcedures,
 } from "./types";
 
@@ -49,6 +50,21 @@ export class HomeServices {
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/procedur`,
         params,
         { headers: { "Content-Type": "application/json" } }
+      );
+
+      return res.data;
+    } catch (err: any) {
+      return "Something went wrong! Please try again later.";
+    }
+  };
+
+  static updateProcedures = async (
+    params: UpdateProcedureParams
+  ): Promise<UpdateProcedureParams | string> => {
+    try {
+      const res = await axios.put<UpdateProcedureParams>(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/procedur`,
+        params
       );
 
       return res.data;
