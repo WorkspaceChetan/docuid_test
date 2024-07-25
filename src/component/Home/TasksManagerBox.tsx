@@ -3,9 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import TaskStatusCol from "./TaskStatusCol";
-import { Columns, TaskItem } from "../types/TasksManagerBoxType";
-import { GetProcedures } from "@/services/types";
-import Filter from "./Filter";
+import { Columns, GetProcedures, TaskItem } from "@/services/types";
 
 const initialColumns: Columns = {
   todo: {
@@ -51,20 +49,14 @@ const TasksManagerBox: React.FC<{
 
       procedures.forEach((procedure) => {
         const taskDate = new Date(procedure.dueDate);
-        const matchesName =
-          selectedName === "joe regon" ||
-          procedure.user.userName === selectedName;
+        const matchesName = procedure.user.userName === selectedName;
         const matchesCategory =
-          selectedCategory === "customer ui create" ||
           procedure.label[0]?.labelName === selectedCategory;
 
         console.log("Matches Name:", matchesName);
         console.log("Matches Category:", matchesCategory);
 
-        if (
-          (selectedName === "joe regon" || matchesName) &&
-          (selectedCategory === "customer ui create" || matchesCategory)
-        ) {
+        if (matchesName && matchesCategory) {
           const task: TaskItem = {
             id: procedure._id,
             label: procedure.label[0]?.labelName || "No Label",

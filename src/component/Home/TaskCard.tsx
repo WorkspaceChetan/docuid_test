@@ -1,6 +1,6 @@
 "use client";
+import { TaskItem } from "@/services/types";
 import Image from "next/image";
-import { TaskItem } from "../types/TasksManagerBoxType";
 
 const TaskCard = ({ label, description, user, date }: TaskItem) => {
   return (

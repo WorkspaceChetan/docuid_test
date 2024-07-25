@@ -1,7 +1,7 @@
 import React from "react";
 import { Draggable } from "react-beautiful-dnd";
 import TaskCard from "./TaskCard";
-import { TaskStatusColProps } from "../types/TasksManagerBoxType";
+import { TaskStatusColProps } from "@/services/types";
 
 const TaskStatusCol: React.FC<TaskStatusColProps> = ({
   title,
