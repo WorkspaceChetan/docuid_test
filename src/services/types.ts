@@ -54,3 +54,14 @@ export interface labelProcedures {
   labelName: string;
   __v: number;
 }
+
+export interface createProceduesParam {
+  title: string;
+  user: string;
+  label: string[];
+  column: string;
+  startDate: string;
+  endDate: string;
+  createAt?: string;
+  dueDate?: string;
+}

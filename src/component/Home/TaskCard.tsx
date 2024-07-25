@@ -14,7 +14,7 @@ const TaskCard = ({ label, description, user, date }: TaskItem) => {
             </div>
           </div>
         </div>
-        <span className="w-[260px] h-[48px] font-black leading-[24px] text-[16px] text-grey-text font-satoshi-variable">
+        <span className="w-[260px] lett font-semibold font-inter leading-[24px] text-[16px] text-grey-text tracking-wide">
           {description}
         </span>
         <div className="w-full max-w-[89px] h-[24px] flex gap-[5px]">

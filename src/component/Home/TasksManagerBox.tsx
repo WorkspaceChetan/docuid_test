@@ -146,15 +146,14 @@ const TasksManagerBox: React.FC<{
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="flex flex-wrap gap-7.5">
+      <div className="flex gap-7.5 overflow-auto">
         {Object.entries(columns)?.map(([id, column]) => (
           <Droppable key={id} droppableId={id}>
             {(provided) => (
               <div
                 ref={provided.innerRef}
                 {...provided.droppableProps}
-                className="flex flex-col gap-5 items-start"
-              >
+                className="flex flex-col gap-5 items-start">
                 <TaskStatusCol
                   title={column.title}
                   color={column.color}
