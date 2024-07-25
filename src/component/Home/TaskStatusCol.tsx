@@ -13,7 +13,7 @@ const TaskStatusCol: React.FC<TaskStatusColProps> = ({
       <div className="flex gap-2.5 items-center">
         <div className={`bg-${color} rounded-full w-4 h-4`} />
         <div className="text-primary-text text-sm font-black text-[14px] leading-[22px]">
-          {title}
+          {title} ({items.length})
         </div>
       </div>
       {items.map((item, index) => (
@@ -23,7 +23,8 @@ const TaskStatusCol: React.FC<TaskStatusColProps> = ({
               ref={provided.innerRef}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
-              className="w-full">
+              className="w-full"
+            >
               <TaskCard {...item} />
             </div>
           )}

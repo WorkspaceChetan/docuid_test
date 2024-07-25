@@ -1,31 +1,50 @@
 "use client";
-import {
-  GetProcedures,
-  labelProcedures,
-  UserProcedures,
-} from "@/services/types";
+import { Category, Users } from "@/services/types";
 import { format } from "date-fns";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import TasksManagerBox from "./TasksManagerBox";
 import { HomeServices } from "@/services/home.services";
-import useRebounceSearch from "@/hooks/useRebounceSearch";
+import { toast } from "react-toastify";
 
-const Filter = ({ procedures }: { procedures: GetProcedures[] | string }) => {
-  const [searchInput, setSearchInput] = useState<string>("");
-  const debouncedSearchInput = useRebounceSearch(searchInput, 500);
-  const [userProcedures, setuserProcedures] = useState<UserProcedures[]>([]);
-  const [selectedUser, setSelectedUser] = useState<string>("");
+type FilterProps = {
+  searchInput: string;
+  setSearchInput: (val: string) => void;
+  selectedUser: string;
+  setSelectedUser: (val: string) => void;
+  selectedLabel: string;
+  setSelectedLabel: (val: string) => void;
+  startDate: Date | undefined;
+  setStartDate: (val: Date | undefined) => void;
+  endDate: Date | undefined;
+  setEndDate: (val: Date | undefined) => void;
+};
+
+const Filter = ({
+  searchInput,
+  setSearchInput,
+  selectedUser,
+  setSelectedUser,
+  selectedLabel,
+  setSelectedLabel,
+  startDate,
+  setStartDate,
+  endDate,
+  setEndDate,
+}: FilterProps) => {
+  // const [searchInput, setSearchInput] = useState<string>("");
+  const [users, setUsers] = useState<Users[]>([]);
+  // const [selectedUser, setSelectedUser] = useState<string>("");
+
+  const [labels, setLabels] = useState<Category[]>([]);
+  // const [selectedLabel, setSelectedLabel] = useState<string>("");
+
+  // const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  // const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
-
-  const [labelProcedures, setlabelProcedures] = useState<labelProcedures[]>([]);
-  const [selectedLabel, setSelectedLabel] = useState<string>("");
   const [isLabelDropdownOpen, setIsLabelDropdownOpen] = useState(false);
-
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [isDateOpen, setIsDateOpen] = useState(false);
 
   const formattedStartDate = startDate ? format(startDate, "dd/MM/yy") : "";
@@ -84,36 +103,29 @@ const Filter = ({ procedures }: { procedures: GetProcedures[] | string }) => {
   };
 
   useEffect(() => {
-    const fetchUserProcedures = async () => {
-      const data = await HomeServices.userProcedues();
-      if (typeof data !== "string") {
-        setuserProcedures(data);
-        if (data.length > 0) {
-          setSelectedUser(data[0].userName);
-        }
-      }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
     };
+  }, []);
+
+  useEffect(() => {
+    const fetchUserProcedures = async () => {
+      const res = await HomeServices.getUsers();
+      if (typeof res !== "string") setUsers(res);
+      else toast.error(res);
+    };
+
     const fetchLabelProcedures = async () => {
-      const data = await HomeServices.labelProcedues();
-      if (typeof data !== "string") {
-        setlabelProcedures(data);
-        if (data.length > 0) {
-          setSelectedLabel(data[0].labelName);
-        }
-      }
+      const res = await HomeServices.getCategories();
+      if (typeof res !== "string") setLabels(res);
+      else toast.error(res);
     };
 
     fetchUserProcedures();
     fetchLabelProcedures();
   }, []);
 
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("mouseout", handleClickOutside);
-    };
-  }, []);
   return (
     <div className="flex flex-col gap-7.5">
       <div className="w-full max-w-[1290px] h-auto lg:h-[68px] rounded-[10px] p-[12px_12px_12px_14px] lg:gap-[33px] gap-[10px] bg-white flex flex-wrap lg:flex-nowrap">
@@ -138,7 +150,8 @@ const Filter = ({ procedures }: { procedures: GetProcedures[] | string }) => {
           <div
             className="relative w-full lg:w-[128px] h-[44px] rounded-[8px] border p-[10px_18px_10px_12px] gap-[8px] text-[#F9FAFB] bg-[#F9FAFB] flex items-center cursor-pointer"
             ref={nameDropdownRef}
-            onClick={toggleUserDropdown}>
+            onClick={toggleUserDropdown}
+          >
             <div className="w-full lg:w-[70px] h-[24px] text-[14px] leading-[24px] font-[500] text-[#495270] whitespace-nowrap">
               {selectedUser}
             </div>
@@ -149,7 +162,8 @@ const Filter = ({ procedures }: { procedures: GetProcedures[] | string }) => {
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
-                onClick={handleRemoveUser}>
+                onClick={handleRemoveUser}
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -169,11 +183,12 @@ const Filter = ({ procedures }: { procedures: GetProcedures[] | string }) => {
 
             {isUserDropdownOpen && (
               <div className="absolute top-[100%] left-0 mt-2 w-full bg-[#E5E7EB] border rounded-[8px] shadow-lg z-10">
-                {userProcedures.map((procedure) => (
+                {users.map((procedure) => (
                   <div
                     key={procedure._id}
                     className="p-2 text-[14px] text-[#495270] hover:bg-[#D1D5DB] cursor-pointer"
-                    onClick={() => handleUserSelect(procedure.userName)}>
+                    onClick={() => handleUserSelect(procedure.userName)}
+                  >
                     {procedure.userName}
                   </div>
                 ))}
@@ -184,7 +199,8 @@ const Filter = ({ procedures }: { procedures: GetProcedures[] | string }) => {
           <div
             className="relative w-full lg:w-[250px] h-[44px] rounded-[8px] border p-[10px_18px_10px_12px] gap-[8px] text-[#F9FAFB] bg-[#F9FAFB] flex items-center cursor-pointer"
             ref={categoryDropdownRef}
-            onClick={toggleLabelDropdown}>
+            onClick={toggleLabelDropdown}
+          >
             <div className="w-full lg:w-[192px] h-[24px] text-[14px] leading-[24px] font-[500] text-[#64748B] whitespace-nowrap">
               {selectedLabel}
             </div>
@@ -195,7 +211,8 @@ const Filter = ({ procedures }: { procedures: GetProcedures[] | string }) => {
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
-                onClick={handleRemoveLabel}>
+                onClick={handleRemoveLabel}
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -215,12 +232,13 @@ const Filter = ({ procedures }: { procedures: GetProcedures[] | string }) => {
 
             {isLabelDropdownOpen && (
               <div className="absolute top-[100%] left-0 mt-2 w-full bg-[#E5E7EB] border rounded-[8px] shadow-lg z-10">
-                {labelProcedures.map((procedure) => (
+                {labels.map((procedure) => (
                   <div
                     key={procedure._id}
                     className="p-2 text-[14px] text-[#495270] hover:bg-[#D1D5DB] cursor-pointer"
-                    onClick={() => handleLabelSelect(procedure.labelName)}>
-                    {procedure.labelName}
+                    onClick={() => handleLabelSelect(procedure.categoryName)}
+                  >
+                    {procedure.categoryName}
                   </div>
                 ))}
               </div>
@@ -255,13 +273,6 @@ const Filter = ({ procedures }: { procedures: GetProcedures[] | string }) => {
           </div>
         </div>
       </div>
-      <TasksManagerBox
-        selectedName={selectedUser}
-        selectedCategory={selectedLabel}
-        searchInput={debouncedSearchInput}
-        startDate={startDate}
-        endDate={endDate}
-      />
     </div>
   );
 };

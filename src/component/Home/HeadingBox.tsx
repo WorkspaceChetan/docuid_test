@@ -8,18 +8,14 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { HomeServices } from "@/services/home.services";
-import {
-  createProceduesParam,
-  labelProcedures,
-  UserProcedures,
-} from "@/services/types";
+import { createProceduesParam, Category, Users } from "@/services/types";
 import { toast } from "react-toastify";
 
 const validationSchema = z.object({
   title: z.string().min(1, "Title is required"),
-  category: z.string().min(1, "Category is required"),
+  priority: z.number().min(1, "Priority is required"),
   user: z.string().min(1, "Username is required"),
-  label: z.string().min(1, "Label is required"),
+  category: z.string().min(1, "Category is required"),
   startDate: z.date({
     required_error: "Date is required",
     invalid_type_error: "That's not a date!",
@@ -32,18 +28,25 @@ type FormValues = z.infer<typeof validationSchema>;
 
 const HeadingBox = () => {
   const [showModal, setShowModal] = useState(false);
-  const [userProcedures, setUserProcedures] = useState<UserProcedures[]>([]);
+  const [userProcedures, setUserProcedures] = useState<Users[]>([]);
   const [selectedUser, setSelectedUser] = useState<string>("");
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
-  const [labelProcedures, setLabelProcedures] = useState<labelProcedures[]>([]);
-  const [selectedLabel, setSelectedLabel] = useState<string>("");
-  const [isLabelDropdownOpen, setIsLabelDropdownOpen] = useState(false);
+  const [category, setCategory] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
 
-  const toggleLabelDropdown = () => setIsLabelDropdownOpen((prev) => !prev);
+  const [selectedPriority, setSelectedPriority] = useState<number>(1);
+  const [isPriorityDropdownOpen, setIsPriorityDropdownOpen] = useState(false);
+
+  const toggleCategoryDropdown = () =>
+    setIsCategoryDropdownOpen((prev) => !prev);
 
   const toggleUserDropdown = () => {
     setIsUserDropdownOpen((prev) => !prev);
+  };
+  const togglePriorityDropdown = () => {
+    setIsPriorityDropdownOpen((prev) => !prev);
   };
 
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
@@ -55,6 +58,7 @@ const HeadingBox = () => {
 
   const nameDropdownRef = useRef<HTMLDivElement>(null);
   const categoryDropdownRef = useRef<HTMLDivElement>(null);
+  const priorityDropdownRef = useRef<HTMLDivElement>(null);
 
   const {
     register,
@@ -68,9 +72,9 @@ const HeadingBox = () => {
     resolver: zodResolver(validationSchema),
     defaultValues: {
       title: "",
-      category: "",
+      priority: 1,
       user: selectedUser,
-      label: selectedLabel,
+      category: selectedCategory,
       column: "todo",
       startDate: startDate ?? undefined,
       endDate: endDate ?? undefined,
@@ -86,13 +90,19 @@ const HeadingBox = () => {
     setIsUserDropdownOpen(false);
   };
 
-  const handleLabelSelect = (name: string) => {
-    const selectedLabelProcedure = labelProcedures.find(
-      (procedure) => procedure.labelName === name
+  const handlePrioritySelect = (val: number) => {
+    setValue("priority", val);
+    setSelectedPriority(val);
+    setIsPriorityDropdownOpen(false);
+  };
+
+  const handleCategorySelect = (name: string) => {
+    const selectedLabelProcedure = category.find(
+      (procedure) => procedure.categoryName === name
     );
-    setValue("label", selectedLabelProcedure?._id || name);
-    setSelectedLabel(name);
-    setIsLabelDropdownOpen(false);
+    setValue("category", selectedLabelProcedure?._id || name);
+    setSelectedCategory(name);
+    setIsCategoryDropdownOpen(false);
   };
 
   const handleDateChange = (dates: [Date | null, Date | null]) => {
@@ -140,7 +150,13 @@ const HeadingBox = () => {
       categoryDropdownRef.current &&
       !categoryDropdownRef.current.contains(event.target as Node)
     ) {
-      setIsLabelDropdownOpen(false);
+      setIsCategoryDropdownOpen(false);
+    }
+    if (
+      priorityDropdownRef.current &&
+      !priorityDropdownRef.current.contains(event.target as Node)
+    ) {
+      setIsPriorityDropdownOpen(false);
     }
   };
 
@@ -149,14 +165,18 @@ const HeadingBox = () => {
     setValue("user", "");
   };
 
-  const handleRemoveLabel = () => {
-    setSelectedLabel("");
-    setValue("label", "");
+  const handleRemoveCategory = () => {
+    setSelectedCategory("");
+    setValue("category", "");
+  };
+  const handleRemovePriority = () => {
+    setSelectedPriority(1);
+    setValue("priority", 1);
   };
 
   useEffect(() => {
     const fetchUserProcedures = async () => {
-      const data = await HomeServices.userProcedues();
+      const data = await HomeServices.getUsers();
       if (typeof data !== "string") {
         setUserProcedures(data);
         if (data.length > 0) {
@@ -166,19 +186,19 @@ const HeadingBox = () => {
       }
     };
 
-    const fetchLabelProcedures = async () => {
-      const data = await HomeServices.labelProcedues();
+    const fetchCategories = async () => {
+      const data = await HomeServices.getCategories();
       if (typeof data !== "string") {
-        setLabelProcedures(data);
+        setCategory(data);
         if (data.length > 0) {
-          setSelectedLabel(data[0].labelName);
-          setValue("label", data[0]._id);
+          setSelectedCategory(data[0].categoryName);
+          setValue("category", data[0]._id);
         }
       }
     };
 
     fetchUserProcedures();
-    fetchLabelProcedures();
+    fetchCategories();
   }, []);
 
   useEffect(() => {
@@ -202,7 +222,8 @@ const HeadingBox = () => {
         </div>
         <button
           className="flex gap-2 h-11 rounded-lg py-2.5 pl-3 pr-4.5 bg-primary text-white font-black text-base"
-          onClick={() => setShowModal(true)}>
+          onClick={() => setShowModal(true)}
+        >
           <Image src="/image/Add Square.svg" alt="add" width={20} height={20} />
           Create a new procedure
         </button>
@@ -228,18 +249,62 @@ const HeadingBox = () => {
                 )}
               </div>
               <div className="mb-2">
-                <label className="block text-gray-700 mb-1">Category</label>
-                <input
-                  type="text"
-                  {...register("category")}
-                  placeholder="Category"
-                  className="w-full px-4 py-2 mb-4 border rounded-md focus:outline-none text-[14px] text-[#495270] bg-[#F9FAFB]"
-                />
-                {errors.category && (
-                  <div className="text-red-600 text-sm">
-                    {errors.category.message}
+                <div className="flex flex-col">
+                  <label className="block text-gray-700 mb-1">Priority</label>
+                  <div
+                    className="relative w-full lg:w-[128px] h-[44px] rounded-[8px] border p-[10px_18px_10px_12px] gap-[8px] text-[#F9FAFB] bg-[#F9FAFB] flex items-center cursor-pointer"
+                    ref={priorityDropdownRef}
+                    onClick={togglePriorityDropdown}
+                  >
+                    <div className="w-full lg:w-[70px] h-[24px] text-[14px] leading-[24px] font-[500] text-[#495270] whitespace-nowrap">
+                      {selectedPriority}
+                    </div>
+                    {selectedPriority ? (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 text-gray-500 ml-2 cursor-pointer"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        onClick={handleRemovePriority}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    ) : (
+                      <Image
+                        src="/image/User.svg"
+                        alt="User Icon"
+                        width={20}
+                        height={20}
+                        className="object-contain"
+                      />
+                    )}
+
+                    {isPriorityDropdownOpen && (
+                      <div className="absolute top-[100%] left-0 mt-2 w-full bg-[#E5E7EB] border rounded-[8px] shadow-lg z-10">
+                        {Array.from(Array(3)).map((_, i) => (
+                          <div
+                            key={i + 1}
+                            className="p-2 text-[14px] text-[#495270] hover:bg-[#D1D5DB] cursor-pointer"
+                            onClick={() => handlePrioritySelect(i + 1)}
+                          >
+                            {i + 1}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
+                  {errors.priority && (
+                    <div className="text-red-600 text-sm">
+                      {errors.priority.message}
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="mb-2">
                 <div className="flex justify-between gap-4">
@@ -248,7 +313,8 @@ const HeadingBox = () => {
                     <div
                       className="relative w-full lg:w-[128px] h-[44px] rounded-[8px] border p-[10px_18px_10px_12px] gap-[8px] text-[#F9FAFB] bg-[#F9FAFB] flex items-center cursor-pointer"
                       ref={nameDropdownRef}
-                      onClick={toggleUserDropdown}>
+                      onClick={toggleUserDropdown}
+                    >
                       <div className="w-full lg:w-[70px] h-[24px] text-[14px] leading-[24px] font-[500] text-[#495270] whitespace-nowrap">
                         {selectedUser}
                       </div>
@@ -259,7 +325,8 @@ const HeadingBox = () => {
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
-                          onClick={handleRemoveUser}>
+                          onClick={handleRemoveUser}
+                        >
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -285,7 +352,8 @@ const HeadingBox = () => {
                               className="p-2 text-[14px] text-[#495270] hover:bg-[#D1D5DB] cursor-pointer"
                               onClick={() =>
                                 handleUserSelect(procedure.userName)
-                              }>
+                              }
+                            >
                               {procedure.userName}
                             </div>
                           ))}
@@ -299,22 +367,24 @@ const HeadingBox = () => {
                     )}
                   </div>
                   <div className="flex flex-col">
-                    <label className="block text-gray-700 mb-1">Label</label>
+                    <label className="block text-gray-700 mb-1">Category</label>
                     <div
                       className="relative w-full  h-[44px] rounded-[8px] border p-[10px_18px_10px_12px] gap-[8px] text-[#F9FAFB] bg-[#F9FAFB] flex items-center cursor-pointer"
                       ref={categoryDropdownRef}
-                      onClick={toggleLabelDropdown}>
+                      onClick={toggleCategoryDropdown}
+                    >
                       <div className="w-full lg:w-[192px] h-[24px] text-[14px] leading-[24px] font-[500] text-[#64748B] whitespace-nowrap">
-                        {selectedLabel}
+                        {selectedCategory}
                       </div>
-                      {selectedLabel ? (
+                      {selectedCategory ? (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="h-4 w-4 text-gray-500 ml-2 cursor-pointer"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
-                          onClick={handleRemoveLabel}>
+                          onClick={handleRemoveCategory}
+                        >
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -332,24 +402,25 @@ const HeadingBox = () => {
                         />
                       )}
 
-                      {isLabelDropdownOpen && (
+                      {isCategoryDropdownOpen && (
                         <div className="absolute top-[100%] left-0 mt-2 w-full bg-[#E5E7EB] border rounded-[8px] shadow-lg z-10">
-                          {labelProcedures.map((procedure) => (
+                          {category.map((procedure) => (
                             <div
                               key={procedure._id}
                               className="p-2 text-[14px] text-[#495270] hover:bg-[#D1D5DB] cursor-pointer"
                               onClick={() =>
-                                handleLabelSelect(procedure.labelName)
-                              }>
-                              {procedure.labelName}
+                                handleCategorySelect(procedure.categoryName)
+                              }
+                            >
+                              {procedure.categoryName}
                             </div>
                           ))}
                         </div>
                       )}
                     </div>
-                    {errors.label && (
+                    {errors.category && (
                       <div className="text-red-600 text-sm">
-                        {errors.label.message}
+                        {errors.category.message}
                       </div>
                     )}
                   </div>
@@ -392,13 +463,15 @@ const HeadingBox = () => {
               <div className="flex justify-end mt-4">
                 <button
                   type="submit"
-                  className="px-4 py-2 mr-2 text-white bg-blue-500 rounded hover:bg-blue-600">
+                  className="px-4 py-2 mr-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+                >
                   Save
                 </button>
                 <button
                   type="button"
                   className="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
-                  onClick={() => setShowModal(false)}>
+                  onClick={() => setShowModal(false)}
+                >
                   Cancel
                 </button>
               </div>

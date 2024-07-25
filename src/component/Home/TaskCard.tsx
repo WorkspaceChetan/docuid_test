@@ -2,12 +2,23 @@
 import { TaskItem } from "@/services/types";
 import Image from "next/image";
 
-const TaskCard = ({ label, description, user, date }: TaskItem) => {
+const TaskCard = ({ label, description, user, date, priority }: TaskItem) => {
   return (
     <div className="w-full max-w-[300px] flex flex-wrap rounded-md w-76 bg-white p-[20px]">
       <div className="w-full max-w-[260px] flex flex-col gap-[10px]">
-        <div className="w-full max-w-[115px] flex gap-[10px]">
-          <Image src="/image/fire.svg" alt="fire" width={44} height={16} />
+        <div className="w-full flex gap-[10px]">
+          <div className="rounded-full p-[2px_10px] bg-[rgba(99,91,255,0.05)] flex justify-center">
+            {Array.from(Array(priority)).map((_, i) => (
+              <Image
+                src="/image/fire 1.png"
+                alt="fire"
+                width={12}
+                height={12}
+                key={i}
+                className="h-[12px] w-[12px]"
+              />
+            ))}
+          </div>
           <div className="w-full max-w-[75px] text-xs font-medium border rounded-full text-gray-700 border-gray-300 flex items-center justify-center">
             <div className="w-full h-[16px] font-normal leading-[16px] text-[10px] font-inter text-center">
               {label}

@@ -1,14 +1,14 @@
 import connect from "@/lib/db";
-import Label from "@/lib/modals/label";
+import Category from "@/lib/modals/category";
 import { NextResponse } from "next/server";
 
 export const GET = async () => {
   try {
     await connect();
-    const labelData = await Label.find();
-    return new NextResponse(JSON.stringify(labelData), { status: 200 });
+    const categoryData = await Category.find();
+    return new NextResponse(JSON.stringify(categoryData), { status: 200 });
   } catch (error: any) {
-    return new NextResponse("Error in fetching label" + error.message, {
+    return new NextResponse("Error in fetching category" + error.message, {
       status: 500,
     });
   }
@@ -19,18 +19,18 @@ export const POST = async (request: Request) => {
     const body = await request.json();
 
     await connect();
-    const labelAdd = new Label(body);
-    await labelAdd.save();
+    const categoryAdd = new Category(body);
+    await categoryAdd.save();
 
     return new NextResponse(
       JSON.stringify({
-        message: "labelAdd is created",
-        data: labelAdd,
+        message: "category is created",
+        data: categoryAdd,
       }),
       { status: 200 }
     );
   } catch (error: any) {
-    return new NextResponse("Error in creating label: " + error.message, {
+    return new NextResponse("Error in creating category: " + error.message, {
       status: 500,
     });
   }

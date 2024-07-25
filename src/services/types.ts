@@ -3,7 +3,7 @@ export interface User {
   userName: string;
 }
 
-export interface Label {
+export interface Category {
   [key: string]: any;
 }
 
@@ -11,7 +11,8 @@ export interface GetProcedures {
   _id: string;
   title: string;
   user: User;
-  label: Label[];
+  priority: number;
+  category: Category[];
   column: string;
   dueDate: string;
   createAt: string;
@@ -23,6 +24,7 @@ export interface TaskItem {
   label: string;
   description: string;
   user: string;
+  priority: number;
   date: string;
 }
 
@@ -43,15 +45,15 @@ export type TaskStatusColProps = {
   items: TaskItem[];
 };
 
-export interface UserProcedures {
+export interface Users {
   _id: string;
   userName: string;
   __v: number;
 }
 
-export interface labelProcedures {
+export interface Category {
   _id: string;
-  labelName: string;
+  categoryName: string;
   __v: number;
 }
 
@@ -62,7 +64,8 @@ export interface UpdateProcedureParams {
 export interface createProceduesParam {
   title: string;
   user: string;
-  label: string[];
+  priority: number;
+  category: string[];
   column: string;
   startDate: string;
   endDate: string;

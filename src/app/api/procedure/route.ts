@@ -1,5 +1,5 @@
 import connect from "@/lib/db";
-import Procedure from "@/lib/modals/procedur";
+import Procedure from "@/lib/modals/procedure";
 import { NextResponse } from "next/server";
 import { Types } from "mongoose";
 
@@ -23,7 +23,7 @@ export const GET = async (request: Request) => {
     const startDateString = url.searchParams.get("startDate");
     const endDateString = url.searchParams.get("endDate");
     const userId = url.searchParams.get("userId");
-    const labelId = url.searchParams.get("labelId");
+    const categoryId = url.searchParams.get("categoryId");
     const title = url.searchParams.get("title");
 
     const filter: any = {};
@@ -42,8 +42,8 @@ export const GET = async (request: Request) => {
       filter.user = userId;
     }
 
-    if (labelId) {
-      filter.label = labelId;
+    if (categoryId) {
+      filter.category = categoryId;
     }
 
     if (title) {
@@ -52,7 +52,7 @@ export const GET = async (request: Request) => {
 
     const procedures = await Procedure.find(filter)
       .populate("user", "userName")
-      .populate("label", "labelName");
+      .populate("category", "categoryName");
     return new NextResponse(JSON.stringify(procedures), { status: 200 });
   } catch (error: any) {
     return new NextResponse("Error in fetching procedures: " + error, {
@@ -85,7 +85,7 @@ export const POST = async (request: Request) => {
 export const PATCH = async (request: Request) => {
   try {
     const body = await request.json();
-    const { _id, title, label, column, dueDate } = body;
+    const { _id, title, category, column, dueDate } = body;
 
     await connect();
 
@@ -107,11 +107,11 @@ export const PATCH = async (request: Request) => {
     const updateData: any = { _id };
     if (title) updateData.title = title;
     if (
-      label &&
-      Array.isArray(label) &&
-      label.every((id) => Types.ObjectId.isValid(id))
+      category &&
+      Array.isArray(category) &&
+      category.every((id) => Types.ObjectId.isValid(id))
     ) {
-      updateData.label = label.map((id) => new Types.ObjectId(id));
+      updateData.category = category.map((id) => new Types.ObjectId(id));
     }
     if (column) updateData.column = column;
 

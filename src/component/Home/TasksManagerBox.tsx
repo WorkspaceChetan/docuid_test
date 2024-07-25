@@ -10,13 +10,13 @@ const initialColumns: Columns = {
   todo: {
     id: "todo",
     title: "Todo",
-    color: "success",
+    color: "[#0CBE5E]",
     items: [],
   },
   doing: {
     id: "doing",
     title: "On doing",
-    color: "warning",
+    color: "[#FFDD0F]",
     items: [],
   },
   done: {
@@ -28,7 +28,7 @@ const initialColumns: Columns = {
   waiting: {
     id: "waiting",
     title: "Waiting",
-    color: "grey-text",
+    color: "[#64748B]",
     items: [],
   },
 };
@@ -55,7 +55,7 @@ const TasksManagerBox: React.FC<{
               !selectedName || procedure.user.userName === selectedName;
             const matchesCategory =
               !selectedCategory ||
-              procedure.label[0]?.labelName === selectedCategory;
+              procedure.category[0]?.categoryName === selectedCategory;
             const matchesSearch =
               !searchInput ||
               procedure.title.toLowerCase().includes(searchInput.toLowerCase());
@@ -81,10 +81,11 @@ const TasksManagerBox: React.FC<{
             const taskDate = new Date(procedure.dueDate);
             const task: TaskItem = {
               id: procedure._id,
-              label: procedure.label[0]?.labelName || "",
+              label: procedure.category[0]?.categoryName || "",
               description: procedure.title,
               user: procedure.user.userName,
               date: taskDate.toLocaleDateString(),
+              priority: procedure.priority,
             };
 
             const columnItems = newColumns[procedure.column]?.items || [];
@@ -152,16 +153,18 @@ const TasksManagerBox: React.FC<{
       }
     }
   };
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="flex gap-7.5 overflow-auto">
+      <div className="flex gap-7.5 overflow-auto pb-5">
         {Object.entries(columns)?.map(([id, column]) => (
           <Droppable key={id} droppableId={id}>
             {(provided) => (
               <div
                 ref={provided.innerRef}
                 {...provided.droppableProps}
-                className="flex flex-col gap-5 items-start">
+                className="flex flex-col gap-5 items-start"
+              >
                 <TaskStatusCol
                   title={column.title}
                   color={column.color}

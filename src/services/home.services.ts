@@ -2,16 +2,16 @@ import axios from "axios";
 import {
   createProceduesParam,
   GetProcedures,
-  labelProcedures,
+  Category,
   UpdateProcedureParams,
-  UserProcedures,
+  Users,
 } from "./types";
 
 export class HomeServices {
   static getProcedues = async () => {
     try {
       const res = await axios.get<GetProcedures[]>(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/procedur`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/procedure`
       );
 
       return res.data;
@@ -20,9 +20,9 @@ export class HomeServices {
     }
   };
 
-  static userProcedues = async () => {
+  static getUsers = async () => {
     try {
-      const res = await axios.get<UserProcedures[]>(
+      const res = await axios.get<Users[]>(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/user`
       );
 
@@ -32,10 +32,10 @@ export class HomeServices {
     }
   };
 
-  static labelProcedues = async () => {
+  static getCategories = async () => {
     try {
-      const res = await axios.get<labelProcedures[]>(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/label`
+      const res = await axios.get<Category[]>(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/category`
       );
 
       return res.data;
@@ -47,7 +47,7 @@ export class HomeServices {
   static createProcedues = async (params: createProceduesParam) => {
     try {
       const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/procedur`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/procedure`,
         params,
         { headers: { "Content-Type": "application/json" } }
       );
@@ -63,7 +63,7 @@ export class HomeServices {
   ): Promise<UpdateProcedureParams | string> => {
     try {
       const res = await axios.put<UpdateProcedureParams>(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/procedur`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/procedure`,
         params
       );
 
