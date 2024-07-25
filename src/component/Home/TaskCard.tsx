@@ -6,15 +6,15 @@ const TaskCard = ({ label, description, user, date }: TaskItem) => {
   return (
     <div className="w-full max-w-[300px] h-[185.07px] flex flex-wrap rounded-md w-76 bg-white p-[20px]">
       <div className="w-full max-w-[260px] h-[145.07px] flex flex-col gap-[10px]">
-        <div className="w-full max-w-[97px] h-[16px] flex gap-[10px]">
+        <div className="w-full max-w-[115px] h-[16px] flex gap-[10px]">
           <Image src="/image/fire.svg" alt="fire" width={44} height={16} />
-          <div className="w-full w-[55px] w-full max-w-[55px] h-[16px] text-xs font-medium border rounded-full text-gray-700 border-gray-300 flex items-center justify-center">
-            <div className="w-[35px] h-[16px] font-medium leading-[16px] text-[10px]">
+          <div className="w-full max-w-[75px] h-[16px] text-xs font-medium border rounded-full text-gray-700 border-gray-300 flex items-center justify-center">
+            <div className="w-full h-[16px] font-normal leading-[16px] text-[10px] font-inter text-center">
               {label}
             </div>
           </div>
         </div>
-        <span className="w-[260px] h-[48px] font-extrabold leading-[24px] text-[16px] text-grey-text font-satoshi-variable">
+        <span className="w-[260px] h-[48px] font-black leading-[24px] text-[16px] text-grey-text font-satoshi-variable">
           {description}
         </span>
         <div className="w-full max-w-[89px] h-[24px] flex gap-[5px]">
@@ -24,7 +24,7 @@ const TaskCard = ({ label, description, user, date }: TaskItem) => {
             width={24}
             height={24}
           />
-          <span className="w-[60px] leading-[20px] font-medium text-[12px] text-[#1C274C] font-inter">
+          <span className="w-full max-w-[60px] leading-[20px] font-medium text-[12px] text-[#1C274C] font-inter">
             {user}
           </span>
         </div>
@@ -37,7 +37,7 @@ const TaskCard = ({ label, description, user, date }: TaskItem) => {
               width={12}
               height={12}
             />
-            <span className="text-[8px] leading-[10px] font-semibold text-[#1C274C] font-inte">
+            <span className="text-[8px] leading-[10px] font-semibold text-[#1C274C] font-inter">
               Due date: {date}
             </span>
           </div>
@@ -48,7 +48,7 @@ const TaskCard = ({ label, description, user, date }: TaskItem) => {
               width={14}
               height={14}
             />
-            <span className="text-2.5 font-semibold text-secondary-text">
+            <span className="text-2.5 font-semibold text-secondary-text font-inter">
               1
             </span>
           </div>

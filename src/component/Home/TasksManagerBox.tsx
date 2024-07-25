@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import TaskStatusCol from "./TaskStatusCol";
-import { Columns, GetProcedures, TaskItem } from "@/services/types";
+import { Columns, TaskItem } from "@/services/types";
+import { HomeServices } from "@/services/home.services";
 
 const initialColumns: Columns = {
   todo: {
@@ -33,44 +34,79 @@ const initialColumns: Columns = {
 };
 
 const TasksManagerBox: React.FC<{
-  procedures: GetProcedures[] | string;
   selectedName: string;
   selectedCategory: string;
-}> = ({ procedures, selectedName, selectedCategory }) => {
+  searchInput: string;
+  startDate?: Date;
+  endDate?: Date;
+}> = ({ selectedName, selectedCategory, searchInput, startDate, endDate }) => {
   const [columns, setColumns] = useState<Columns>(initialColumns);
 
   useEffect(() => {
-    if (typeof procedures !== "string") {
-      const newColumns: Columns = { ...initialColumns };
+    const fetchData = async () => {
+      try {
+        const procedures = await HomeServices.getProcedues();
 
-      procedures.forEach((procedure) => {
-        const taskDate = new Date(procedure.dueDate);
-        const matchesName = procedure.user.userName === selectedName;
-        const matchesCategory =
-          procedure.label[0]?.labelName === selectedCategory;
+        if (Array.isArray(procedures)) {
+          const newColumns: Columns = { ...initialColumns };
 
-        if (matchesName && matchesCategory) {
-          const task: TaskItem = {
-            id: procedure._id,
-            label: procedure.label[0]?.labelName || "No Label",
-            description: procedure.title,
-            user: procedure.user.userName,
-            date: taskDate.toLocaleDateString(),
-          };
+          const filteredProcedures = procedures.filter((procedure) => {
+            const matchesName =
+              !selectedName || procedure.user.userName === selectedName;
+            const matchesCategory =
+              !selectedCategory ||
+              procedure.label[0]?.labelName === selectedCategory;
+            const matchesSearch =
+              !searchInput ||
+              procedure.title.toLowerCase().includes(searchInput.toLowerCase());
 
-          if (
-            !newColumns[procedure.column].items.some(
-              (item) => item.id === task.id
-            )
-          ) {
-            newColumns[procedure.column].items.push(task);
-          }
+            const taskCreatedDate = new Date(procedure.createAt);
+            const taskDueDate = new Date(procedure.dueDate);
+
+            const start = startDate ? new Date(startDate) : null;
+            const end = endDate ? new Date(endDate) : null;
+
+            const matchesDateRange =
+              (!start || taskCreatedDate >= start) &&
+              (!end || taskDueDate <= end);
+
+            return (
+              matchesName &&
+              matchesCategory &&
+              matchesSearch &&
+              matchesDateRange
+            );
+          });
+          filteredProcedures.forEach((procedure) => {
+            const taskDate = new Date(procedure.dueDate);
+            const task: TaskItem = {
+              id: procedure._id,
+              label: procedure.label[0]?.labelName || "",
+              description: procedure.title,
+              user: procedure.user.userName,
+              date: taskDate.toLocaleDateString(),
+            };
+
+            const columnItems = newColumns[procedure.column]?.items || [];
+            if (!columnItems.some((item) => item.id === task.id)) {
+              newColumns[procedure.column] = {
+                ...newColumns[procedure.column],
+                items: [...columnItems, task],
+              };
+            }
+          });
+
+          setColumns(newColumns);
+        } else {
+          console.error("Procedures is not an array:", procedures);
         }
-      });
+      } catch (error) {
+        console.error("Failed to fetch procedures:", error);
+      }
+    };
 
-      setColumns(newColumns);
-    }
-  }, [procedures, selectedName, selectedCategory]);
+    fetchData();
+  }, [selectedName, selectedCategory, searchInput, startDate, endDate]);
 
   const onDragEnd = (result: any) => {
     const { source, destination } = result;
@@ -111,7 +147,7 @@ const TasksManagerBox: React.FC<{
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="flex flex-wrap gap-7.5">
-        {Object.entries(columns).map(([id, column]) => (
+        {Object.entries(columns)?.map(([id, column]) => (
           <Droppable key={id} droppableId={id}>
             {(provided) => (
               <div

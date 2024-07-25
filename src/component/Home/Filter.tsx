@@ -24,10 +24,12 @@ const Filter = ({ procedures }: { procedures: GetProcedures[] | string }) => {
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [isDateOpen, setIsDateOpen] = useState(false);
+
   const formattedStartDate = startDate ? format(startDate, "dd/MM/yy") : "";
   const formattedEndDate = endDate ? format(endDate, "dd/MM/yy") : "";
   const nameDropdownRef = useRef<HTMLDivElement>(null);
   const categoryDropdownRef = useRef<HTMLDivElement>(null);
+  const [searchInput, setSearchInput] = useState<string>("");
 
   const toggleLabelDropdown = () => setIsLabelDropdownOpen((prev) => !prev);
 
@@ -35,12 +37,12 @@ const Filter = ({ procedures }: { procedures: GetProcedures[] | string }) => {
     setIsUserDropdownOpen((prev) => !prev);
   };
 
-  const handleUserSelect = (name: string) => {
+  const handleUserSelect = async (name: string) => {
     setSelectedUser(name);
     setIsUserDropdownOpen(false);
   };
 
-  const handleLabelSelect = (name: string) => {
+  const handleLabelSelect = async (name: string) => {
     setSelectedLabel(name);
     setIsLabelDropdownOpen(false);
   };
@@ -49,7 +51,7 @@ const Filter = ({ procedures }: { procedures: GetProcedures[] | string }) => {
     const [start, end] = dates;
     setStartDate(start ?? undefined);
     setEndDate(end ?? undefined);
-    setIsDateOpen(false);
+    if (end) setIsDateOpen(false);
   };
 
   const openDatePicker = () => {
@@ -117,6 +119,8 @@ const Filter = ({ procedures }: { procedures: GetProcedures[] | string }) => {
             type="text"
             placeholder="Search procedure"
             className="w-full h-full border-none outline-none text-[16px] leading-[24px] font-[400] text-[#64748B] bg-[#F9FAFB]"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
           />
         </div>
 
@@ -182,7 +186,7 @@ const Filter = ({ procedures }: { procedures: GetProcedures[] | string }) => {
           </div>
 
           <div className="relative w-full lg:w-[194px] h-[44px] rounded-lg border p-2 bg-[#F9FAFB] flex items-center cursor-pointer">
-            <div className="flex-1 text-sm font-medium text-[#64748B]">
+            <div className="flex-1 text-sm font-medium text-[#64748B] text-[14px]">
               {formattedStartDate && formattedEndDate
                 ? `${formattedStartDate} - ${formattedEndDate}`
                 : "Select Date Range"}
@@ -210,9 +214,11 @@ const Filter = ({ procedures }: { procedures: GetProcedures[] | string }) => {
         </div>
       </div>
       <TasksManagerBox
-        procedures={procedures}
         selectedName={selectedUser}
         selectedCategory={selectedLabel}
+        searchInput={searchInput}
+        startDate={startDate}
+        endDate={endDate}
       />
     </div>
   );
