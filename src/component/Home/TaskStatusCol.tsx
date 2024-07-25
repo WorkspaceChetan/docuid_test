@@ -21,6 +21,7 @@ const TaskStatusCol: React.FC<TaskStatusColProps> = ({
               ref={provided.innerRef}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
+              className="w-full"
             >
               <TaskCard {...item} />
             </div>
